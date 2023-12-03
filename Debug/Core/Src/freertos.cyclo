@@ -1,3 +1,5 @@
-freertos.c:100:6:MX_FREERTOS_Init	1
-freertos.c:149:6:StartmotorTask	12
-freertos.c:213:6:StartACCTask	18
+freertos.c:110:6:MX_FREERTOS_Init	1
+freertos.c:162:6:StartmotorTask	12
+freertos.c:226:6:StartACCTask	18
+freertos.c:550:6:UART_RX	1
+freertos.c:564:6:USART2_IRQHandler	1

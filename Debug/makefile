@@ -39,37 +39,40 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := test
+BUILD_ARTIFACT_NAME := NTI_GP_RTOS
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-test.elf \
+NTI_GP_RTOS.elf \
 
 MAP_FILES += \
-test.map \
+NTI_GP_RTOS.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-test.list \
+NTI_GP_RTOS.list \
 
 OBJCOPY_HEX += \
-test.hex \
+NTI_GP_RTOS.hex \
+
+OBJCOPY_BIN += \
+NTI_GP_RTOS.bin \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: test.elf secondary-outputs
+main-build: NTI_GP_RTOS.elf secondary-outputs
 
 # Tool invocations
-test.elf test.map: $(OBJS) $(USER_OBJS) C:\Users\Kirollos\STM32CubeIDE\workspace_1.12.0\STM32repo\test\STM32F401RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "test.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Kirollos\STM32CubeIDE\workspace_1.12.0\STM32repo\test\STM32F401RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="test.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+NTI_GP_RTOS.elf NTI_GP_RTOS.map: $(OBJS) $(USER_OBJS) F:\NEW\ EMBEDDED\ DIPLOMA\ 2023\ARM-CODES-WORKSPACE\NTI_GP_RTOS\STM32F401RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "NTI_GP_RTOS.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"F:\NEW EMBEDDED DIPLOMA 2023\ARM-CODES-WORKSPACE\NTI_GP_RTOS\STM32F401RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="NTI_GP_RTOS.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -78,22 +81,27 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-test.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "test.list"
+NTI_GP_RTOS.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "NTI_GP_RTOS.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-test.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "test.hex"
+NTI_GP_RTOS.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "NTI_GP_RTOS.hex"
+	@echo 'Finished building: $@'
+	@echo ' '
+
+NTI_GP_RTOS.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "NTI_GP_RTOS.bin"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) default.size.stdout test.elf test.hex test.list test.map
+	-$(RM) NTI_GP_RTOS.bin NTI_GP_RTOS.elf NTI_GP_RTOS.hex NTI_GP_RTOS.list NTI_GP_RTOS.map default.size.stdout
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'

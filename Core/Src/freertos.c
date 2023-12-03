@@ -60,6 +60,8 @@ typedef struct
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+volatile uint8_t Static_u8UART_Recieve[4];
+volatile uint8_t Global_u8CarMode;
 float Distance = 0.0;
 /* USER CODE END Variables */
 /* Definitions for motorTask */
@@ -76,6 +78,13 @@ const osThreadAttr_t ACCTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityHigh,
 };
+/* Definitions for UART_RX_TASK */
+osThreadId_t UART_RX_TASKHandle;
+const osThreadAttr_t UART_RX_TASK_attributes = {
+  .name = "UART_RX_TASK",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityRealtime1,
+};
 /* Definitions for motorQueue */
 osMessageQueueId_t motorQueueHandle;
 const osMessageQueueAttr_t motorQueue_attributes = {
@@ -84,11 +93,12 @@ const osMessageQueueAttr_t motorQueue_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+extern UART_HandleTypeDef huart2;
 /* USER CODE END FunctionPrototypes */
 
 void StartmotorTask(void *argument);
 void StartACCTask(void *argument);
+void UART_RX(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -128,6 +138,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of ACCTask */
   ACCTaskHandle = osThreadNew(StartACCTask, NULL, &ACCTask_attributes);
+
+  /* creation of UART_RX_TASK */
+  UART_RX_TASKHandle = osThreadNew(UART_RX, NULL, &UART_RX_TASK_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -527,8 +540,35 @@ void StartACCTask(void *argument)
   /* USER CODE END StartACCTask */
 }
 
+/* USER CODE BEGIN Header_UART_RX */
+/**
+* @brief Function implementing the UART_RX_TASK thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_UART_RX */
+void UART_RX(void *argument)
+{
+  /* USER CODE BEGIN UART_RX */
+  /* Infinite loop */
+  for(;;)
+  {
+   HAL_UART_Receive(&huart2,Static_u8UART_Recieve,4,10);
+    osDelay(5);
+  }
+  /* USER CODE END UART_RX */
+}
+
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
+void USART2_IRQHandler(void)
+{
+	 /* USER CODE BEGIN USART1_IRQn 0 */
+	  /* USER CODE END USART1_IRQn 0 */
+	  HAL_UART_IRQHandler(&huart2);
+	  /* USER CODE BEGIN USART1_IRQn 1 */
+	  Global_u8CarMode=atoi((char*)Static_u8UART_Recieve);
+	  /* USER CODE END USART1_IRQn 1 */
+}
 /* USER CODE END Application */
 
