@@ -1,0 +1,3 @@
+freertos.c:100:6:MX_FREERTOS_Init	1
+freertos.c:149:6:StartmotorTask	12
+freertos.c:213:6:StartACCTask	18
