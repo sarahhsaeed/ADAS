@@ -20,6 +20,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -45,6 +46,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -89,6 +91,7 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM5_Init();
   MX_TIM2_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   HCSR04_Init(HCSR04_SENSOR1, &htim2);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);

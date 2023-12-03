@@ -26,6 +26,7 @@ Core/HCSR04/HCSR04.o: ../Core/HCSR04/HCSR04.c ../Core/HCSR04/HCSR04.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Core/HCSR04/../../util/DWT.h ../Core/HCSR04/HCSR04_cfg.h \
  ../Core/HCSR04/../HCSR04/HCSR04.h
 ../Core/HCSR04/HCSR04.h:
@@ -56,6 +57,7 @@ Core/HCSR04/HCSR04.o: ../Core/HCSR04/HCSR04.c ../Core/HCSR04/HCSR04.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/HCSR04/../../util/DWT.h:
 ../Core/HCSR04/HCSR04_cfg.h:
 ../Core/HCSR04/../HCSR04/HCSR04.h:

@@ -1,5 +1,5 @@
-main.c:66:5:main	1
-main.c:131:6:SystemClock_Config	3
-main.c:169:6:HAL_TIM_IC_CaptureCallback	1
-main.c:183:6:HAL_TIM_PeriodElapsedCallback	2
-main.c:199:6:Error_Handler	1
+main.c:68:5:main	1
+main.c:134:6:SystemClock_Config	3
+main.c:172:6:HAL_TIM_IC_CaptureCallback	1
+main.c:186:6:HAL_TIM_PeriodElapsedCallback	2
+main.c:202:6:Error_Handler	1

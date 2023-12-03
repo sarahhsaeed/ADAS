@@ -1,3 +1,5 @@
-../Core/Src/freertos.c:100:6:MX_FREERTOS_Init	8	static
-../Core/Src/freertos.c:149:6:StartmotorTask	48	static
-../Core/Src/freertos.c:213:6:StartACCTask	72	static
+../Core/Src/freertos.c:110:6:MX_FREERTOS_Init	8	static
+../Core/Src/freertos.c:162:6:StartmotorTask	48	static
+../Core/Src/freertos.c:226:6:StartACCTask	72	static
+../Core/Src/freertos.c:550:6:UART_RX	16	static
+../Core/Src/freertos.c:564:6:USART2_IRQHandler	8	static
