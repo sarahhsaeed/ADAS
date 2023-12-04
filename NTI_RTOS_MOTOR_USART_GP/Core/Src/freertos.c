@@ -47,6 +47,16 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+extern uint8_t Buffer[4];
+extern uint16_t Buffer_ASCII_TO_INT;
+extern uint8_t Car_Current_Mode;
+extern uint8_t Car_Current_Direction;
+extern uint8_t Car_Current_Status;
+extern uint8_t Car_Current_Speed;
+extern uint8_t Buffer_GUI[GUI_ARRAY_SIZE];
+
+
+
 float Distance = 0.0;
 /* USER CODE END Variables */
 /* Definitions for motorTask */
@@ -470,7 +480,52 @@ void StartNormalMode(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+	if(Car_Current_Mode == NORMAL_MODE)
+	{
+		Buffer_GUI[MODE_DIG_1_IDx] = CHARACTER_ZERO;
+		Buffer_GUI[MODE_DIG_2_IDx] = CHARACTER_ZERO;
+
+		Buffer_GUI[SPEED_DIG_1_IDx] = ((Car_Current_Speed  * 2) / 100) + CHARACTER_ZERO;
+		Buffer_GUI[SPEED_DIG_2_IDx] = (((Car_Current_Speed * 2) / 10) % 10) + CHARACTER_ZERO;
+		Buffer_GUI[SPEED_DIG_3_IDx] = ((Car_Current_Speed  * 2) % 10) + CHARACTER_ZERO;
+
+		if(Car_Current_Status == CAR_RUNNING)
+		{
+			switch (Car_Current_Direction)
+			{
+				case MOVE_FORWARD:
+					DCMotor_moveForward(Car_Current_Speed);
+					break;
+
+				case MOVE_BACKWORD:
+					DCMotor_moveBackward(Car_Current_Speed);
+					break;
+				case MOVE_RIGHT:
+					DCMotor_moveRight(Car_Current_Speed);
+					osDelay(5);         // TODO :: TEST
+					DCMotor_moveForward(Car_Current_Speed);
+					Car_Current_Direction = MOVE_FORWARD;
+					break;
+				case MOVE_LEFT:
+					DCMotor_moveLeft(Car_Current_Speed);
+					osDelay(5);        // TODO :: TEST
+					DCMotor_moveForward(Car_Current_Speed);
+					Car_Current_Direction = MOVE_FORWARD;
+					break;
+				default:
+					break;
+			}
+		}
+		else if (Car_Current_Status == CAR_STOP)
+		{
+			DCMotor_stop();
+		}
+		else
+		{
+			// RETURN ERROR //
+		}
+	}
+    osDelay(10);
   }
   /* USER CODE END StartNormalMode */
 }

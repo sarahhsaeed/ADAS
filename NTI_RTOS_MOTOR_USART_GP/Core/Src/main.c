@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "../HCSR04/HCSR04.h"
+#include <stdlib.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,9 +47,16 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+uint16_t Buffer_ASCII_TO_INT;
 uint8_t Buffer[4];
-uint8_t Buffer_GUI[14] = {"0001201510101"};
-//uint8_t Buffer_GUI[14] = {"0109521701010"};
+uint8_t Car_Current_Mode      = CAR_DEFAULT_MODE;
+uint8_t Car_Current_Direction = CAR_STOP;
+uint8_t Car_Current_Status    = CAR_RUNNING;
+uint8_t Car_Current_Speed     = CAR_DEFAULT_SPEED;
+
+//uint8_t Buffer_GUI[GUI_ARRAY_SIZE]
+uint8_t Buffer_GUI[GUI_ARRAY_SIZE]   = {"1112000010101"};
+//uint8_t Buffer_GUI[GUI_ARRAY_SIZE] = {"0109521701010"};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -183,6 +191,28 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	HAL_UART_Transmit(&huart2, Buffer_GUI, 14, 20);
+	Buffer_ASCII_TO_INT = atoi((char*)Buffer);
+	if((Buffer_ASCII_TO_INT == NORMAL_MODE)||(Buffer_ASCII_TO_INT == ACC_MODE) || (Buffer_ASCII_TO_INT == SELF_DRIVING))
+	{
+		Car_Current_Mode = Buffer_ASCII_TO_INT;
+		Car_Current_Status = CAR_RUNNING ;
+
+	}
+	else if((Buffer_ASCII_TO_INT == MOVE_FORWARD)||(Buffer_ASCII_TO_INT == MOVE_BACKWORD)||(Buffer_ASCII_TO_INT == MOVE_RIGHT)||(Buffer_ASCII_TO_INT == MOVE_LEFT))
+	{
+		Car_Current_Direction = Buffer_ASCII_TO_INT;
+	}
+	else if (Buffer_ASCII_TO_INT == STOP_MOTOR)
+	{
+		Car_Current_Speed  = CAR_STOP ;
+		Car_Current_Status = CAR_STOP ;
+	}
+	else
+	{
+		Car_Current_Speed = Buffer_ASCII_TO_INT - CAR_SPEED_OFFSET ;
+		Car_Current_Status = CAR_RUNNING ;
+
+	}
 }
 
 

@@ -46,6 +46,50 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
+#define GUI_ARRAY_SIZE                14
+#define MODE_DIG_1_IDx                0
+#define MODE_DIG_2_IDx                1
+#define DISTANCE_DIG_1_IDx            2
+#define DISTANCE_DIG_2_IDx            3
+#define DISTANCE_DIG_3_IDx            4
+#define SPEED_DIG_1_IDx               5
+#define SPEED_DIG_2_IDx               6
+#define SPEED_DIG_3_IDx               7
+#define RAIN_DIG_1_IDx                8
+#define LANE_DIG_1_IDx                9
+#define LANE_DIG_2_IDx                10
+#define B_SPOT_DIG1_IDx               11
+#define B_SPOT_DIG2_IDx               12
+
+
+#define CHARACTER_ZERO                '0'
+#define CHARACTER_ONE                 '1'
+
+#define CAR_DEFAULT_SPEED             50
+#define CAR_DEFAULT_MODE              0
+
+#define CAR_SPEED_OFFSET              1000
+
+typedef enum
+{
+	NORMAL_MODE    = 6 ,
+	ACC_MODE       = 9 ,     // TODO:: In Mobile APP
+	SELF_DRIVING   = 7 ,
+	MOVE_RIGHT     = 3 ,
+	MOVE_LEFT      = 1 ,
+	MOVE_FORWARD   = 2 ,
+	MOVE_BACKWORD  = 4 ,
+	STOP_MOTOR     = 5 ,
+	STOP_MODE      = 8 ,    // TODO:: In Mobile APP
+
+}MOBILE_BYTES_t;
+
+typedef enum
+{
+	CAR_STOP = 0 ,
+	CAR_RUNNING
+}CAR_STATUS_t;
+
 
 /* USER CODE END EM */
 

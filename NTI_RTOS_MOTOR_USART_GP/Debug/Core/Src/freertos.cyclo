@@ -1,4 +1,4 @@
-freertos.c:95:6:MX_FREERTOS_Init	1
-freertos.c:147:6:StartmotorTask	2
-freertos.c:177:6:StartACCTask	13
-freertos.c:467:6:StartNormalMode	1
+freertos.c:105:6:MX_FREERTOS_Init	1
+freertos.c:157:6:StartmotorTask	2
+freertos.c:187:6:StartACCTask	13
+freertos.c:477:6:StartNormalMode	8
