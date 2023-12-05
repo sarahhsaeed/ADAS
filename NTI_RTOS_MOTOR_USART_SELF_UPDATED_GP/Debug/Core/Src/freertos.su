@@ -1,0 +1,7 @@
+../Core/Src/freertos.c:127:6:MX_FREERTOS_Init	8	static
+../Core/Src/freertos.c:185:6:StartmotorTask	32	static
+../Core/Src/freertos.c:215:6:StartACCTask	16	static
+../Core/Src/freertos.c:508:6:StartNormalMode	16	static
+../Core/Src/freertos.c:571:6:StartGUI_UpdateTask	16	static
+../Core/Src/freertos.c:597:6:StartSelfDrivingTask	16	static
+../Core/Src/freertos.c:663:6:SelfDrivingCheck_side	8	static

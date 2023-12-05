@@ -1,0 +1,7 @@
+freertos.c:127:6:MX_FREERTOS_Init	1
+freertos.c:185:6:StartmotorTask	2
+freertos.c:215:6:StartACCTask	14
+freertos.c:508:6:StartNormalMode	8
+freertos.c:571:6:StartGUI_UpdateTask	2
+freertos.c:597:6:StartSelfDrivingTask	5
+freertos.c:663:6:SelfDrivingCheck_side	1

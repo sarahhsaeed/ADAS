@@ -1,0 +1,7 @@
+../Core/HCSR04/../../util/DWT.h:18:26:DWT_Delay_Init	4	static,ignoring_inline_asm
+../Core/HCSR04/../../util/DWT.h:55:22:DWT_Delay_us	24	static
+../Core/HCSR04/HCSR04.c:35:6:HCSR04_Init	96	static
+../Core/HCSR04/HCSR04.c:129:6:HCSR04_TMR_OVF_ISR	24	static
+../Core/HCSR04/HCSR04.c:142:6:HCSR04_TMR_IC_ISR	32	static
+../Core/HCSR04/HCSR04.c:188:7:HCSR04_Read	16	static
+../Core/HCSR04/HCSR04.c:193:6:HCSR04_Trigger	16	static
