@@ -1,7 +1,10 @@
-../Core/Src/freertos.c:127:6:MX_FREERTOS_Init	8	static
-../Core/Src/freertos.c:185:6:StartmotorTask	32	static
-../Core/Src/freertos.c:215:6:StartACCTask	16	static
-../Core/Src/freertos.c:508:6:StartNormalMode	16	static
-../Core/Src/freertos.c:571:6:StartGUI_UpdateTask	16	static
-../Core/Src/freertos.c:597:6:StartSelfDrivingTask	16	static
-../Core/Src/freertos.c:663:6:SelfDrivingCheck_side	8	static
+../Core/Src/freertos.c:152:6:MX_FREERTOS_Init	8	static
+../Core/Src/freertos.c:219:6:StartmotorTask	32	static
+../Core/Src/freertos.c:249:6:StartACCTask	16	static
+../Core/Src/freertos.c:542:6:StartNormalMode	16	static
+../Core/Src/freertos.c:605:6:StartGUI_UpdateTask	16	static
+../Core/Src/freertos.c:631:6:StartSelfDrivingTask	16	static
+../Core/Src/freertos.c:702:6:LaneDepartureWarning	16	static
+../Core/Src/freertos.c:768:6:RainDetection	24	static
+../Core/Src/freertos.c:810:6:LaneKeepAssist	24	static
+../Core/Src/freertos.c:854:6:SelfDrivingCheck_side	8	static

@@ -56,7 +56,8 @@ extern uint8_t Car_Current_Status;
 extern uint8_t Car_Current_Speed;
 extern uint8_t Buffer_GUI[GUI_ARRAY_SIZE];
 extern uint8_t GUI_TRANSMIT_INSTANT;
-
+extern volatile uint8_t LeftIrCounter;
+extern volatile uint8_t RightIrCounter;
 
 float Distance = 0.0;
 float Distance_Right = 0.0;
@@ -98,6 +99,27 @@ const osThreadAttr_t SelfDrivingTask_attributes = {
 		.stack_size = 128 * 4,
 		.priority = (osPriority_t) osPriorityAboveNormal7,
 };
+/* Definitions for LDW_TASK */
+osThreadId_t LDW_TASKHandle;
+const osThreadAttr_t LDW_TASK_attributes = {
+		.name = "LDW_TASK",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for RainDetect_TASK */
+osThreadId_t RainDetect_TASKHandle;
+const osThreadAttr_t RainDetect_TASK_attributes = {
+		.name = "RainDetect_TASK",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for LKA_TASK */
+osThreadId_t LKA_TASKHandle;
+const osThreadAttr_t LKA_TASK_attributes = {
+		.name = "LKA_TASK",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for motorQueue */
 osMessageQueueId_t motorQueueHandle;
 const osMessageQueueAttr_t motorQueue_attributes = {
@@ -116,6 +138,9 @@ void StartACCTask(void *argument);
 void StartNormalMode(void *argument);
 void StartGUI_UpdateTask(void *argument);
 void StartSelfDrivingTask(void *argument);
+void LaneDepartureWarning(void *argument);
+void RainDetection(void *argument);
+void LaneKeepAssist(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -164,6 +189,15 @@ void MX_FREERTOS_Init(void) {
 
 	/* creation of SelfDrivingTask */
 	SelfDrivingTaskHandle = osThreadNew(StartSelfDrivingTask, NULL, &SelfDrivingTask_attributes);
+
+	/* creation of LDW_TASK */
+	LDW_TASKHandle = osThreadNew(LaneDepartureWarning, NULL, &LDW_TASK_attributes);
+
+	/* creation of RainDetect_TASK */
+	RainDetect_TASKHandle = osThreadNew(RainDetection, NULL, &RainDetect_TASK_attributes);
+
+	/* creation of LKA_TASK */
+	LKA_TASKHandle = osThreadNew(LaneKeepAssist, NULL, &LKA_TASK_attributes);
 
 	/* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
@@ -655,7 +689,164 @@ void StartSelfDrivingTask(void *argument)
 		}
 		osDelay(1);
 	}
-/* USER CODE END StartSelfDrivingTask */
+	/* USER CODE END StartSelfDrivingTask */
+}
+
+/* USER CODE BEGIN Header_LaneDepartureWarning */
+/**
+ * @brief Function implementing the LDW_TASK thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_LaneDepartureWarning */
+void LaneDepartureWarning(void *argument)
+{
+	/* USER CODE BEGIN LaneDepartureWarning */
+	/* Infinite loop */
+	for(;;)
+	{
+		if(LeftIrCounter>2)
+		{
+			LeftIrCounter=0;
+		}
+		if(RightIrCounter>2)
+		{
+			RightIrCounter=0;
+		}
+		if(LeftIrCounter == 1 && RightIrCounter == 0)
+		{
+			// Activate left lane warning
+			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,1);
+			osDelay(500);
+		}
+		else if(LeftIrCounter == 2 )
+		{
+			// Deactivate left lane warning
+			LeftIrCounter = 0;
+			RightIrCounter = 0;
+			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,0);
+			osDelay(500);
+		}
+		else if(RightIrCounter == 1 && LeftIrCounter == 0)
+		{
+			// Activate right lane warning
+			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,1);
+			osDelay(500);
+		}
+		else if(RightIrCounter == 2)
+		{
+			// Deactivate right lane warning
+			LeftIrCounter = 0;
+			RightIrCounter = 0;
+			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,0);
+			osDelay(500);
+		}
+		else if((RightIrCounter == 1 && LeftIrCounter == 1))
+		{
+			LeftIrCounter = 0;
+			RightIrCounter = 0;
+			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,0);
+			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,0);
+			osDelay(500);
+		}
+		else
+		{
+			// No lane departure warning
+			osDelay(100);
+		}
+	}
+	/* USER CODE END LaneDepartureWarning */
+}
+
+/* USER CODE BEGIN Header_RainDetection */
+/**
+ * @brief Function implementing the RainDetect_TASK thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_RainDetection */
+void RainDetection(void *argument)
+{
+	/* USER CODE BEGIN RainDetection */
+	/* Infinite loop */
+	/* Infinite loop */
+	int32_t RainDetectFlag = 0;
+	/* Infinite loop */
+	for(;;)
+	{
+		if(HAL_GPIO_ReadPin(RAIN_SENSOR_GPIO_Port, RAIN_SENSOR_Pin)==1)
+		{
+			HAL_GPIO_WritePin(RAIN_LED_GPIO_Port, RAIN_LED_Pin, 1);
+			if(RainDetectFlag==0)
+			{
+				//__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_1, 100);
+				SERVO_MoveTo(SERVO_MOTOR2,180);
+				RainDetectFlag=1;
+			}
+			else if(RainDetectFlag==1)
+			{
+				//__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_1, 2000);
+				SERVO_MoveTo(SERVO_MOTOR2,0);
+				RainDetectFlag=0;
+
+			}
+		}
+		else
+		{
+			HAL_GPIO_WritePin(RAIN_LED_GPIO_Port, RAIN_LED_Pin, 0);
+
+		}
+		osDelay(100);
+		/* USER CODE END RainDetection */
+	}
+}
+/* USER CODE BEGIN Header_LaneKeepAssist */
+/**
+ * @brief Function implementing the LKA_TASK thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_LaneKeepAssist */
+void LaneKeepAssist(void *argument)
+{
+	/* USER CODE BEGIN LaneKeepAssist */
+	uint8_t laneKeepFlag=0;
+	/* Infinite loop */
+	for(;;)
+	{
+		if(LeftIrCounter==1)
+		{
+			laneKeepFlag=1;
+			Car_Current_Speed=30;
+			DCMotor_moveRight(Car_Current_Speed);
+			osDelay(200);
+
+		}
+		if(laneKeepFlag==1 && LeftIrCounter==0)
+		{
+			laneKeepFlag=0;
+			Car_Current_Speed=50;
+			DCMotor_moveForward(Car_Current_Speed);
+			osDelay(200);
+		}
+		if(RightIrCounter==1)
+		{
+			laneKeepFlag=1;
+			Car_Current_Speed=30;
+			DCMotor_moveLeft(Car_Current_Speed);
+			osDelay(200);
+
+		}
+		if(laneKeepFlag==1 && RightIrCounter==0)
+		{
+			laneKeepFlag=0;
+			Car_Current_Speed=50;
+			DCMotor_moveForward(Car_Current_Speed);
+			osDelay(200);
+		}
+		osDelay(100);
+	}
+	/* USER CODE END LaneKeepAssist */
 }
 
 /* Private application code --------------------------------------------------*/

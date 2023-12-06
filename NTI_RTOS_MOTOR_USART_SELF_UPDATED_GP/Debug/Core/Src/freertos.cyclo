@@ -1,7 +1,10 @@
-freertos.c:127:6:MX_FREERTOS_Init	1
-freertos.c:185:6:StartmotorTask	2
-freertos.c:215:6:StartACCTask	14
-freertos.c:508:6:StartNormalMode	8
-freertos.c:571:6:StartGUI_UpdateTask	2
-freertos.c:597:6:StartSelfDrivingTask	5
-freertos.c:663:6:SelfDrivingCheck_side	1
+freertos.c:152:6:MX_FREERTOS_Init	1
+freertos.c:219:6:StartmotorTask	2
+freertos.c:249:6:StartACCTask	14
+freertos.c:542:6:StartNormalMode	8
+freertos.c:605:6:StartGUI_UpdateTask	2
+freertos.c:631:6:StartSelfDrivingTask	5
+freertos.c:702:6:LaneDepartureWarning	11
+freertos.c:768:6:RainDetection	4
+freertos.c:810:6:LaneKeepAssist	7
+freertos.c:854:6:SelfDrivingCheck_side	1

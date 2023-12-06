@@ -49,6 +49,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+volatile uint8_t LeftIrCounter;
+volatile uint8_t RightIrCounter;
 uint16_t Buffer_ASCII_TO_INT;
 uint8_t Buffer[4];
 uint8_t Car_Current_Mode      = CAR_DEFAULT_MODE  ;
@@ -106,12 +108,15 @@ int main(void)
   MX_TIM2_Init();
   MX_USART2_UART_Init();
   MX_TIM11_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   HCSR04_Init(HCSR04_SENSOR1, &htim2);
   SERVO_Init(SERVO_MOTOR1);
+  SERVO_Init(SERVO_MOTOR2);
 
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 
 
   /* UART Receive */
@@ -221,7 +226,19 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	}
 	GUI_TRANSMIT_INSTANT = 1 ;
 }
-
+/* EXTI interrupt callback */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	switch(GPIO_Pin)
+	{
+	case LEFT_IR_Pin:
+		LeftIrCounter++;
+		break;
+	case RIGHT_IR_Pin:
+		RightIrCounter++;
+		break;
+	}
+}
 
 /* USER CODE END 4 */
 

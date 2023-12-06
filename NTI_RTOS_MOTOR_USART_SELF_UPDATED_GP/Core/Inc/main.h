@@ -72,6 +72,7 @@ extern "C" {
 
 #define SELF_DRIVING_CRITICAL_RANGE   20
 #define SERVO_MOTOR1    0
+#define SERVO_MOTOR2    1
 
 
 typedef enum
@@ -109,6 +110,20 @@ void Error_Handler(void);
 #define MOTOR_EN1_GPIO_Port GPIOA
 #define MOTOR_EN2_Pin GPIO_PIN_1
 #define MOTOR_EN2_GPIO_Port GPIOA
+#define LEFT_IR_LED_Pin GPIO_PIN_4
+#define LEFT_IR_LED_GPIO_Port GPIOA
+#define RIGHT_IR_LED_Pin GPIO_PIN_7
+#define RIGHT_IR_LED_GPIO_Port GPIOA
+#define LEFT_IR_Pin GPIO_PIN_0
+#define LEFT_IR_GPIO_Port GPIOB
+#define LEFT_IR_EXTI_IRQn EXTI0_IRQn
+#define RIGHT_IR_Pin GPIO_PIN_1
+#define RIGHT_IR_GPIO_Port GPIOB
+#define RIGHT_IR_EXTI_IRQn EXTI1_IRQn
+#define RAIN_SENSOR_Pin GPIO_PIN_2
+#define RAIN_SENSOR_GPIO_Port GPIOB
+#define RAIN_LED_Pin GPIO_PIN_8
+#define RAIN_LED_GPIO_Port GPIOA
 #define MOTOR_IN4_Pin GPIO_PIN_10
 #define MOTOR_IN4_GPIO_Port GPIOA
 #define MOTOR_IN3_Pin GPIO_PIN_5
