@@ -7,5 +7,5 @@
 ../Core/Src/freertos.c:772:6:LaneDepartureWarning	16	static
 ../Core/Src/freertos.c:844:6:RainDetection	24	static
 ../Core/Src/freertos.c:888:6:LaneKeepAssist	24	static
-../Core/Src/freertos.c:937:6:StartBlindspot	24	static
-../Core/Src/freertos.c:970:6:SelfDrivingCheck_side	8	static
+../Core/Src/freertos.c:933:6:StartBlindspot	24	static
+../Core/Src/freertos.c:967:6:SelfDrivingCheck_side	8	static

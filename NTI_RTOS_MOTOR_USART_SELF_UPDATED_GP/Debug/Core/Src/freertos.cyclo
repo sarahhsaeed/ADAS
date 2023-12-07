@@ -7,5 +7,5 @@ freertos.c:683:6:StartSelfDrivingTask	5
 freertos.c:772:6:LaneDepartureWarning	11
 freertos.c:844:6:RainDetection	4
 freertos.c:888:6:LaneKeepAssist	7
-freertos.c:937:6:StartBlindspot	3
-freertos.c:970:6:SelfDrivingCheck_side	1
+freertos.c:933:6:StartBlindspot	3
+freertos.c:967:6:SelfDrivingCheck_side	1

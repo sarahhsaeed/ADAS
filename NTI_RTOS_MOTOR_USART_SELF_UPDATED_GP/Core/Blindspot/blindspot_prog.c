@@ -12,7 +12,7 @@
 uint8_t blindspot_isObjectDetected(void) {
 
 	// Read distance from the ultrasonic sensor
-    uint8_t distance = HCSR04_Read(HCSR04_SENSOR1);
+    double distance = HCSR04_Read(HCSR04_SENSOR2);
 
 
     // Check if an object is within the blind spot range

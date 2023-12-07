@@ -567,7 +567,7 @@ void StartACCTask(void *argument)
 			// ACC END
 #endif
 		}
-		osDelay(20);
+		osDelay(50);
 	}
   /* USER CODE END StartACCTask */
 }
@@ -846,7 +846,7 @@ void RainDetection(void *argument)
   /* USER CODE BEGIN RainDetection */
 	/* Infinite loop */
 	/* Infinite loop */
-	int32_t RainDetectFlag = 0;
+	uint8_t RainDetectFlag = 0;
 	/* Infinite loop */
 	for(;;)
 	{
@@ -895,30 +895,26 @@ void LaneKeepAssist(void *argument)
 		if(LeftIrCounter==1)
 		{
 			laneKeepFlag=1;
-			Car_Current_Speed=30;
-			DCMotor_moveRight(Car_Current_Speed);
+			DCMotor_moveRight(70);
 			osDelay(200);
 
 		}
 		if(laneKeepFlag==1 && LeftIrCounter==0)
 		{
 			laneKeepFlag=0;
-			Car_Current_Speed=50;
 			DCMotor_moveForward(Car_Current_Speed);
 			osDelay(200);
 		}
 		if(RightIrCounter==1)
 		{
 			laneKeepFlag=1;
-			Car_Current_Speed=30;
-			DCMotor_moveLeft(Car_Current_Speed);
+			DCMotor_moveLeft(70);
 			osDelay(200);
 
 		}
 		if(laneKeepFlag==1 && RightIrCounter==0)
 		{
 			laneKeepFlag=0;
-			Car_Current_Speed=50;
 			DCMotor_moveForward(Car_Current_Speed);
 			osDelay(200);
 		}
@@ -946,6 +942,7 @@ void StartBlindspot(void *argument)
 	{
 		HCSR04_Trigger(HCSR04_SENSOR2);
 		TRIG_Ticks = 0;
+		osDelay(50);
 	}
 	uint8_t blind_check = blindspot_isObjectDetected();
 	if(blind_check == 1)
@@ -953,7 +950,7 @@ void StartBlindspot(void *argument)
 		// Toggle warning LED
 		HAL_GPIO_WritePin(BLIND_LED_GPIO_Port, BLIND_LED_Pin, 1);
 		Buffer_GUI[B_SPOT_DIG1_IDx] = Buffer_GUI[B_SPOT_DIG2_IDx] = 1;
-		osDelay(50);
+		osDelay(1000);
 	}
 	else
 	{
