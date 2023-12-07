@@ -704,10 +704,10 @@ void StartSelfDrivingTask(void *argument)
 			{
 				uint8_t last_speed = Car_Current_Speed;
 				const uint8_t turn_speed = 80;
-				SelfDrivingCheck_side(); //Check both sides - Lefat and Right - to get a dicision for moving
+				SelfDrivingCheck_side(); /* Check both sides - Left and Right - to get a decision for diversion */
 				if(Distance_Left > Distance_Right)
 				{
-					DCMotor_moveLeft(turn_speed);
+					/*DCMotor_moveLeft(turn_speed);
 					osDelay(500);
 					DCMotor_moveForward(last_speed);
 					osDelay(600);
@@ -725,11 +725,50 @@ void StartSelfDrivingTask(void *argument)
 					osDelay(500);
 					DCMotor_moveLeft(turn_speed);
 					osDelay(400);
+					DCMotor_moveForward(last_speed);*/
+					DCMotor_moveLeft(turn_speed);
+					osDelay(10);
+					uint8_t tick = 0;
+					while(1)
+					{
+						HCSR04_Trigger(HCSR04_SENSOR1);
+						osDelay(50);
+						double d = HCSR04_Read(HCSR04_SENSOR1);
+						tick++;
+						if(d >= Distance_Left)
+							break;
+					}
+					DCMotor_stop();
+					SERVO_MoveTo(SERVO_MOTOR1, SERVO_ANGLE_RIGHT);
+					osDelay(100);
 					DCMotor_moveForward(last_speed);
+					osDelay(10);
+					while(1)
+					{
+						HCSR04_Trigger(HCSR04_SENSOR1);
+						osDelay(50);
+						double d = HCSR04_Read(HCSR04_SENSOR1);
+						if(d >= SELF_DRIVING_CRITICAL_RANGE)
+							break;
+					}
+					DCMotor_stop();
+					SERVO_MoveTo(SERVO_MOTOR1, SERVO_ANGLE_CENTER);
+					osDelay(100);
+
+					DCMotor_moveLeft(turn_speed);
+					osDelay(10);
+					while(--tick)
+					{
+						osDelay(50);
+					}
+					DCMotor_stop();
+					osDelay(100);
+					DCMotor_moveForward(last_speed);
+					osDelay(10);
 				}
 				else
 				{
-					DCMotor_moveRight(turn_speed);
+					/*DCMotor_moveRight(turn_speed);
 					osDelay(500);
 					DCMotor_moveForward(last_speed);
 					osDelay(600);
@@ -747,7 +786,46 @@ void StartSelfDrivingTask(void *argument)
 					osDelay(500);
 					DCMotor_moveRight(turn_speed);
 					osDelay(400);
+					DCMotor_moveForward(last_speed);*/
+					DCMotor_moveRight(turn_speed);
+					osDelay(10);
+					uint8_t tick = 0;
+					while(1)
+					{
+						HCSR04_Trigger(HCSR04_SENSOR1);
+						osDelay(50);
+						double d = HCSR04_Read(HCSR04_SENSOR1);
+						tick++;
+						if(d >= Distance_Right)
+							break;
+					}
+					DCMotor_stop();
+					SERVO_MoveTo(SERVO_MOTOR1, SERVO_ANGLE_LEFT);
+					osDelay(100);
 					DCMotor_moveForward(last_speed);
+					osDelay(10);
+					while(1)
+					{
+						HCSR04_Trigger(HCSR04_SENSOR1);
+						osDelay(50);
+						double d = HCSR04_Read(HCSR04_SENSOR1);
+						if(d >= SELF_DRIVING_CRITICAL_RANGE)
+							break;
+					}
+					DCMotor_stop();
+					SERVO_MoveTo(SERVO_MOTOR1, SERVO_ANGLE_CENTER);
+					osDelay(100);
+
+					DCMotor_moveRight(turn_speed);
+					osDelay(10);
+					while(--tick)
+					{
+						osDelay(50);
+					}
+					DCMotor_stop();
+					osDelay(100);
+					DCMotor_moveForward(last_speed);
+					osDelay(10);
 				}
 
 			}
@@ -857,13 +935,13 @@ void RainDetection(void *argument)
 			if(RainDetectFlag==0)
 			{
 				//__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_1, 100);
-				SERVO_MoveTo(SERVO_MOTOR2,180);
+				SERVO_MoveTo(SERVO_MOTOR2,SERVO_ANGLE_FULL_LEFT);
 				RainDetectFlag=1;
 			}
 			else if(RainDetectFlag==1)
 			{
 				//__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_1, 2000);
-				SERVO_MoveTo(SERVO_MOTOR2,0);
+				SERVO_MoveTo(SERVO_MOTOR2,SERVO_ANGLE_FULL_RIGHT);
 				RainDetectFlag=0;
 
 			}
@@ -892,6 +970,7 @@ void LaneKeepAssist(void *argument)
 	/* Infinite loop */
 	for(;;)
 	{
+		osDelay(1000);continue; // temp disable
 		if(LeftIrCounter==1)
 		{
 			laneKeepFlag=1;
@@ -969,23 +1048,31 @@ void SelfDrivingCheck_side(void)
 
 	DCMotor_stop();
 	DCMotor_moveBackward(Car_Current_Speed);
-	osDelay(500);
+	while(1)
+	{
+		HCSR04_Trigger(HCSR04_SENSOR1);
+		osDelay(50);
+		double d = HCSR04_Read(HCSR04_SENSOR1);
+		if(d > (SELF_DRIVING_CRITICAL_RANGE+10))
+			break;
+		osDelay(10);
+	}
 	DCMotor_stop();
 	osDelay(10);
 	/* Servo turn to Left (150) then read distance*/
-	SERVO_MoveTo(SERVO_MOTOR1,150);
+	SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_LEFT);
 	HCSR04_Trigger(HCSR04_SENSOR1);
 	osDelay(800);
 	Distance_Left = HCSR04_Read(HCSR04_SENSOR1);
 
 	/* Servo turn to Right (50) then read distance*/
-	SERVO_MoveTo(SERVO_MOTOR1,50);
+	SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_RIGHT);
 	HCSR04_Trigger(HCSR04_SENSOR1);
 	osDelay(800);
 	Distance_Right = HCSR04_Read(HCSR04_SENSOR1);
 	/* Servo turn to origin (100) then read distance*/
-	SERVO_MoveTo(SERVO_MOTOR1,100);
-
+	SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_CENTER);
+	osDelay(200);
 }
 /* USER CODE END Application */
 
