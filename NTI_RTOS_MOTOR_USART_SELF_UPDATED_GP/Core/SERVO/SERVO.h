@@ -9,6 +9,12 @@
 // The Number OF Servo Motors To Be Used In The Project
 #define SERVO_NUM  2
 
+#define SERVO_ANGLE_CENTER	(100)
+#define SERVO_ANGLE_LEFT	(150)
+#define SERVO_ANGLE_RIGHT	(50)
+#define SERVO_ANGLE_FULL_LEFT	(180)
+#define SERVO_ANGLE_FULL_RIGHT	(0)
+
 typedef struct
 {
 	GPIO_TypeDef * SERVO_GPIO;

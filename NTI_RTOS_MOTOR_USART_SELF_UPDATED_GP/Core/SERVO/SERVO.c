@@ -106,6 +106,8 @@ void SERVO_Init(uint16_t au16_SERVO_Instance)
 	/*--------[ Start The PWM Channel ]-------*/
 
 	HAL_TIM_PWM_Start(&htim, SERVO_CfgParam[au16_SERVO_Instance].PWM_TIM_CH);
+
+	SERVO_MoveTo(au16_SERVO_Instance, SERVO_ANGLE_CENTER);
 }
 
 /* Moves A Specific Motor To A Specific Degree That Can Be Float Number */
