@@ -106,13 +106,13 @@ void HCSR04_Init(uint8_t au8_HCSR04_Instance, TIM_HandleTypeDef* TMR_Handle)
 	TMR_Handle->Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	//TMR_Handle->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
 	TMR_Handle->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-	HAL_TIM_Base_Init(TMR_Handle);
+	//HAL_TIM_Base_Init(TMR_Handle);
 	sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-	HAL_TIM_ConfigClockSource(TMR_Handle, &sClockSourceConfig);
-	HAL_TIM_IC_Init(TMR_Handle);
+	//HAL_TIM_ConfigClockSource(TMR_Handle, &sClockSourceConfig);
+	//HAL_TIM_IC_Init(TMR_Handle);
 	sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
 	sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-	HAL_TIMEx_MasterConfigSynchronization(TMR_Handle, &sMasterConfig);
+	//HAL_TIMEx_MasterConfigSynchronization(TMR_Handle, &sMasterConfig);
 	sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
 	sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
 	sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;

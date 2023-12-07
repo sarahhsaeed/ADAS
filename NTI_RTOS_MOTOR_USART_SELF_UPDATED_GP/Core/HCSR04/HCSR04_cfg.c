@@ -26,7 +26,7 @@ const HCSR04_CfgType HCSR04_CfgParam[HCSR04_UNITS] =
 		GPIOB,
 		GPIO_PIN_13,
 		TIM2,
-		TIM_CHANNEL_2,
+		TIM_CHANNEL_3,
 		16
 	}
 };
