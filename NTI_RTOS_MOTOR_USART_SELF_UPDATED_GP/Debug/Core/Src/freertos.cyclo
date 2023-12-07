@@ -4,7 +4,7 @@ freertos.c:249:6:StartACCTask	14
 freertos.c:542:6:StartNormalMode	8
 freertos.c:605:6:StartGUI_UpdateTask	2
 freertos.c:631:6:StartSelfDrivingTask	5
-freertos.c:702:6:LaneDepartureWarning	11
-freertos.c:768:6:RainDetection	4
-freertos.c:810:6:LaneKeepAssist	7
-freertos.c:854:6:SelfDrivingCheck_side	1
+freertos.c:714:6:LaneDepartureWarning	11
+freertos.c:780:6:RainDetection	4
+freertos.c:822:6:LaneKeepAssist	7
+freertos.c:866:6:SelfDrivingCheck_side	1

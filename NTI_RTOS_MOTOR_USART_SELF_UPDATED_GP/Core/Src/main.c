@@ -112,7 +112,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HCSR04_Init(HCSR04_SENSOR1, &htim2);
   SERVO_Init(SERVO_MOTOR1);
-  SERVO_Init(SERVO_MOTOR2);
+  //SERVO_Init(SERVO_MOTOR2);
 
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);

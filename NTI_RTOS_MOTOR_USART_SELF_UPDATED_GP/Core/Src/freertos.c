@@ -643,51 +643,63 @@ void StartSelfDrivingTask(void *argument)
 		  		  Distance = 9999.0;
 		  	  }*/
 			TRIG_Ticks++;
-			if(TRIG_Ticks >= 5)
+			if(TRIG_Ticks >= 1)
 			{
 				HCSR04_Trigger(HCSR04_SENSOR1);
 				TRIG_Ticks = 0;
-				if (Distance <= SELF_DRIVING_CRITICAL_RANGE)
+			}
+			if (Distance <= SELF_DRIVING_CRITICAL_RANGE)
+			{
+				uint8_t last_speed = Car_Current_Speed;
+				const uint8_t turn_speed = 80;
+				SelfDrivingCheck_side(); //Check both sides - Lefat and Right - to get a dicision for moving
+				if(Distance_Left > Distance_Right)
 				{
-
-					SelfDrivingCheck_side(); //Check both sides - Lefat and Right - to get a dicision for moving
-					if(Distance_Left > Distance_Right)
-					{
-						DCMotor_moveLeft(Car_Current_Speed);
-						osDelay(500);
-						DCMotor_moveForward(Car_Current_Speed);
-						osDelay(600);
-						DCMotor_moveRight(Car_Current_Speed);
-						osDelay(500);
-						DCMotor_moveForward(Car_Current_Speed);
-						osDelay(600);
-						DCMotor_moveRight(Car_Current_Speed);
-						osDelay(400);
-					}
-					else
-					{
-						DCMotor_moveRight(Car_Current_Speed);
-						osDelay(500);
-						DCMotor_moveForward(Car_Current_Speed);
-						osDelay(600);
-						DCMotor_moveLeft(Car_Current_Speed);
-						osDelay(500);
-						DCMotor_moveForward(Car_Current_Speed);
-						osDelay(600);
-						DCMotor_moveLeft(Car_Current_Speed);
-						osDelay(400);
-					}
-
+					DCMotor_moveLeft(turn_speed);
+					osDelay(500);
+					DCMotor_moveForward(last_speed);
+					osDelay(600);
+					DCMotor_stop();
+					osDelay(100);
+					DCMotor_moveRight(turn_speed);
+					osDelay(500);
+					DCMotor_moveForward(last_speed);
+					osDelay(600);
+					DCMotor_stop();
+					osDelay(100);
+					DCMotor_moveRight(turn_speed);
+					osDelay(400);
+					DCMotor_moveForward(last_speed);
+					osDelay(100);
 				}
-
 				else
 				{
-					DCMotor_moveForward(Car_Current_Speed);  //Just keeping forward if there is no obstacles in front of the car
+					DCMotor_moveRight(turn_speed);
+					osDelay(500);
+					DCMotor_moveForward(last_speed);
+					osDelay(600);
+					DCMotor_stop();
+					osDelay(100);
+					DCMotor_moveLeft(turn_speed);
+					osDelay(500);
+					DCMotor_moveForward(last_speed);
+					osDelay(600);
+					DCMotor_stop();
+					osDelay(100);
+					DCMotor_moveLeft(turn_speed);
+					osDelay(400);
+					DCMotor_moveForward(last_speed);
+					osDelay(100);
 				}
 
 			}
+
+			else
+			{
+				DCMotor_moveForward(Car_Current_Speed);  //Just keeping forward if there is no obstacles in front of the car
+			}
 		}
-		osDelay(1);
+		osDelay(30);
 	}
 	/* USER CODE END StartSelfDrivingTask */
 }
@@ -856,21 +868,22 @@ void SelfDrivingCheck_side(void)
 
 	DCMotor_stop();
 	DCMotor_moveBackward(Car_Current_Speed);
-	osDelay(50);
-
-	/* Servo turn to Right (120) then read distance*/
-	SERVO_MoveTo(SERVO_MOTOR1,120);
+	osDelay(500);
+	DCMotor_stop();
+	osDelay(10);
+	/* Servo turn to Left (150) then read distance*/
+	SERVO_MoveTo(SERVO_MOTOR1,150);
 	HCSR04_Trigger(HCSR04_SENSOR1);
-	osDelay(300);
-	Distance_Right = HCSR04_Read(HCSR04_SENSOR1);
-
-	/* Servo turn to Left (60) then read distance*/
-	SERVO_MoveTo(SERVO_MOTOR1,60);
-	HCSR04_Trigger(HCSR04_SENSOR1);
-	osDelay(300);
+	osDelay(800);
 	Distance_Left = HCSR04_Read(HCSR04_SENSOR1);
-	/* Servo turn to origin (90) then read distance*/
-	SERVO_MoveTo(SERVO_MOTOR1,90);
+
+	/* Servo turn to Right (50) then read distance*/
+	SERVO_MoveTo(SERVO_MOTOR1,50);
+	HCSR04_Trigger(HCSR04_SENSOR1);
+	osDelay(800);
+	Distance_Right = HCSR04_Read(HCSR04_SENSOR1);
+	/* Servo turn to origin (100) then read distance*/
+	SERVO_MoveTo(SERVO_MOTOR1,100);
 
 }
 /* USER CODE END Application */

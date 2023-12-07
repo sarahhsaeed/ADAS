@@ -7,7 +7,7 @@
 
 
 // The Number OF Servo Motors To Be Used In The Project
-#define SERVO_NUM  1
+#define SERVO_NUM  2
 
 typedef struct
 {
