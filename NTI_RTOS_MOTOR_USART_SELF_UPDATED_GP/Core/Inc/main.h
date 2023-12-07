@@ -122,8 +122,14 @@ void Error_Handler(void);
 #define RIGHT_IR_EXTI_IRQn EXTI1_IRQn
 #define RAIN_SENSOR_Pin GPIO_PIN_2
 #define RAIN_SENSOR_GPIO_Port GPIOB
+#define RED_LIGHT_2_Pin GPIO_PIN_7
+#define RED_LIGHT_2_GPIO_Port GPIOC
+#define RED_LIGHT_1_Pin GPIO_PIN_8
+#define RED_LIGHT_1_GPIO_Port GPIOC
 #define RAIN_LED_Pin GPIO_PIN_8
 #define RAIN_LED_GPIO_Port GPIOA
+#define BLIND_LED_Pin GPIO_PIN_9
+#define BLIND_LED_GPIO_Port GPIOA
 #define MOTOR_IN4_Pin GPIO_PIN_10
 #define MOTOR_IN4_GPIO_Port GPIOA
 #define MOTOR_IN3_Pin GPIO_PIN_5

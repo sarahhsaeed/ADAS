@@ -28,6 +28,7 @@
 #include "../HCSR04/HCSR04.h"
 #include "../DCMotor/DCMotor.h"
 #include "../SERVO/SERVO.h"
+#include "../Blindspot/blindspot_assist.h"
 #include "tim.h"
 /* USER CODE END Includes */
 
@@ -37,7 +38,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define HCSR04_SENSOR1  0
 
 /* USER CODE END PD */
 
@@ -67,63 +67,70 @@ float Distance_Left = 0.0;
 /* Definitions for motorTask */
 osThreadId_t motorTaskHandle;
 const osThreadAttr_t motorTask_attributes = {
-		.name = "motorTask",
-		.stack_size = 128 * 4,
-		.priority = (osPriority_t) osPriorityRealtime,
+  .name = "motorTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityRealtime,
 };
 /* Definitions for ACCTask */
 osThreadId_t ACCTaskHandle;
 const osThreadAttr_t ACCTask_attributes = {
-		.name = "ACCTask",
-		.stack_size = 128 * 4,
-		.priority = (osPriority_t) osPriorityHigh,
+  .name = "ACCTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
 };
 /* Definitions for NormalModeTask */
 osThreadId_t NormalModeTaskHandle;
 const osThreadAttr_t NormalModeTask_attributes = {
-		.name = "NormalModeTask",
-		.stack_size = 128 * 4,
-		.priority = (osPriority_t) osPriorityHigh1,
+  .name = "NormalModeTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityHigh1,
 };
 /* Definitions for GUI_UpdateTask */
 osThreadId_t GUI_UpdateTaskHandle;
 const osThreadAttr_t GUI_UpdateTask_attributes = {
-		.name = "GUI_UpdateTask",
-		.stack_size = 128 * 4,
-		.priority = (osPriority_t) osPriorityNormal,
+  .name = "GUI_UpdateTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for SelfDrivingTask */
 osThreadId_t SelfDrivingTaskHandle;
 const osThreadAttr_t SelfDrivingTask_attributes = {
-		.name = "SelfDrivingTask",
-		.stack_size = 128 * 4,
-		.priority = (osPriority_t) osPriorityAboveNormal7,
+  .name = "SelfDrivingTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityAboveNormal7,
 };
 /* Definitions for LDW_TASK */
 osThreadId_t LDW_TASKHandle;
 const osThreadAttr_t LDW_TASK_attributes = {
-		.name = "LDW_TASK",
-		.stack_size = 128 * 4,
-		.priority = (osPriority_t) osPriorityLow,
+  .name = "LDW_TASK",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for RainDetect_TASK */
 osThreadId_t RainDetect_TASKHandle;
 const osThreadAttr_t RainDetect_TASK_attributes = {
-		.name = "RainDetect_TASK",
-		.stack_size = 128 * 4,
-		.priority = (osPriority_t) osPriorityLow,
+  .name = "RainDetect_TASK",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for LKA_TASK */
 osThreadId_t LKA_TASKHandle;
 const osThreadAttr_t LKA_TASK_attributes = {
-		.name = "LKA_TASK",
-		.stack_size = 128 * 4,
-		.priority = (osPriority_t) osPriorityLow,
+  .name = "LKA_TASK",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for Blindspot */
+osThreadId_t BlindspotHandle;
+const osThreadAttr_t Blindspot_attributes = {
+  .name = "Blindspot",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for motorQueue */
 osMessageQueueId_t motorQueueHandle;
 const osMessageQueueAttr_t motorQueue_attributes = {
-		.name = "motorQueue"
+  .name = "motorQueue"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -141,71 +148,75 @@ void StartSelfDrivingTask(void *argument);
 void LaneDepartureWarning(void *argument);
 void RainDetection(void *argument);
 void LaneKeepAssist(void *argument);
+void StartBlindspot(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
- * @brief  FreeRTOS initialization
- * @param  None
- * @retval None
- */
+  * @brief  FreeRTOS initialization
+  * @param  None
+  * @retval None
+  */
 void MX_FREERTOS_Init(void) {
-	/* USER CODE BEGIN Init */
+  /* USER CODE BEGIN Init */
 
-	/* USER CODE END Init */
+  /* USER CODE END Init */
 
-	/* USER CODE BEGIN RTOS_MUTEX */
+  /* USER CODE BEGIN RTOS_MUTEX */
 	/* add mutexes, ... */
-	/* USER CODE END RTOS_MUTEX */
+  /* USER CODE END RTOS_MUTEX */
 
-	/* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
 	/* add semaphores, ... */
-	/* USER CODE END RTOS_SEMAPHORES */
+  /* USER CODE END RTOS_SEMAPHORES */
 
-	/* USER CODE BEGIN RTOS_TIMERS */
+  /* USER CODE BEGIN RTOS_TIMERS */
 	/* start timers, add new ones, ... */
-	/* USER CODE END RTOS_TIMERS */
+  /* USER CODE END RTOS_TIMERS */
 
-	/* Create the queue(s) */
-	/* creation of motorQueue */
-	motorQueueHandle = osMessageQueueNew (16, sizeof(motorControl_t), &motorQueue_attributes);
+  /* Create the queue(s) */
+  /* creation of motorQueue */
+  motorQueueHandle = osMessageQueueNew (16, sizeof(motorControl_t), &motorQueue_attributes);
 
-	/* USER CODE BEGIN RTOS_QUEUES */
+  /* USER CODE BEGIN RTOS_QUEUES */
 	/* add queues, ... */
-	/* USER CODE END RTOS_QUEUES */
+  /* USER CODE END RTOS_QUEUES */
 
-	/* Create the thread(s) */
-	/* creation of motorTask */
-	motorTaskHandle = osThreadNew(StartmotorTask, NULL, &motorTask_attributes);
+  /* Create the thread(s) */
+  /* creation of motorTask */
+  motorTaskHandle = osThreadNew(StartmotorTask, NULL, &motorTask_attributes);
 
-	/* creation of ACCTask */
-	ACCTaskHandle = osThreadNew(StartACCTask, NULL, &ACCTask_attributes);
+  /* creation of ACCTask */
+  ACCTaskHandle = osThreadNew(StartACCTask, NULL, &ACCTask_attributes);
 
-	/* creation of NormalModeTask */
-	NormalModeTaskHandle = osThreadNew(StartNormalMode, NULL, &NormalModeTask_attributes);
+  /* creation of NormalModeTask */
+  NormalModeTaskHandle = osThreadNew(StartNormalMode, NULL, &NormalModeTask_attributes);
 
-	/* creation of GUI_UpdateTask */
-	GUI_UpdateTaskHandle = osThreadNew(StartGUI_UpdateTask, NULL, &GUI_UpdateTask_attributes);
+  /* creation of GUI_UpdateTask */
+  GUI_UpdateTaskHandle = osThreadNew(StartGUI_UpdateTask, NULL, &GUI_UpdateTask_attributes);
 
-	/* creation of SelfDrivingTask */
-	SelfDrivingTaskHandle = osThreadNew(StartSelfDrivingTask, NULL, &SelfDrivingTask_attributes);
+  /* creation of SelfDrivingTask */
+  SelfDrivingTaskHandle = osThreadNew(StartSelfDrivingTask, NULL, &SelfDrivingTask_attributes);
 
-	/* creation of LDW_TASK */
-	LDW_TASKHandle = osThreadNew(LaneDepartureWarning, NULL, &LDW_TASK_attributes);
+  /* creation of LDW_TASK */
+  LDW_TASKHandle = osThreadNew(LaneDepartureWarning, NULL, &LDW_TASK_attributes);
 
-	/* creation of RainDetect_TASK */
-	RainDetect_TASKHandle = osThreadNew(RainDetection, NULL, &RainDetect_TASK_attributes);
+  /* creation of RainDetect_TASK */
+  RainDetect_TASKHandle = osThreadNew(RainDetection, NULL, &RainDetect_TASK_attributes);
 
-	/* creation of LKA_TASK */
-	LKA_TASKHandle = osThreadNew(LaneKeepAssist, NULL, &LKA_TASK_attributes);
+  /* creation of LKA_TASK */
+  LKA_TASKHandle = osThreadNew(LaneKeepAssist, NULL, &LKA_TASK_attributes);
 
-	/* USER CODE BEGIN RTOS_THREADS */
+  /* creation of Blindspot */
+  BlindspotHandle = osThreadNew(StartBlindspot, NULL, &Blindspot_attributes);
+
+  /* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
-	/* USER CODE END RTOS_THREADS */
+  /* USER CODE END RTOS_THREADS */
 
-	/* USER CODE BEGIN RTOS_EVENTS */
+  /* USER CODE BEGIN RTOS_EVENTS */
 	/* add events, ... */
-	/* USER CODE END RTOS_EVENTS */
+  /* USER CODE END RTOS_EVENTS */
 
 }
 
@@ -218,7 +229,7 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartmotorTask */
 void StartmotorTask(void *argument)
 {
-	/* USER CODE BEGIN StartmotorTask */
+  /* USER CODE BEGIN StartmotorTask */
 	/* Infinite loop */
 	for(;;)
 	{
@@ -232,11 +243,40 @@ void StartmotorTask(void *argument)
 			  Motor2_SetSpeed(70);
 			  HAL_Delay(5);
 		  }*/
+			double prev_speeds[2];
+			Motors_GetSpeeds(&prev_speeds[0], &prev_speeds[1]);
+			uint8_t flag = 0;
+			for(uint8_t i = 0; i < 2; i++)
+			{
+				if(motortask.motors[i].control == MOTOR_OFF)
+				{
+					flag = 1;
+					break;
+				}
+				if((motortask.motors[i].modify & MOTOR_MODIFY_SPEED))
+				{
+					if(motortask.motors[i].speed < prev_speeds[i])
+					{
+						flag = 1;
+						break;
+					}
+				}
+			}
+			if(flag)
+			{
+				HAL_GPIO_WritePin(RED_LIGHT_1_GPIO_Port, RED_LIGHT_1_Pin, 1);
+				HAL_GPIO_WritePin(RED_LIGHT_2_GPIO_Port, RED_LIGHT_2_Pin, 1);
+			}
+			else
+			{
+				HAL_GPIO_WritePin(RED_LIGHT_1_GPIO_Port, RED_LIGHT_1_Pin, 0);
+				HAL_GPIO_WritePin(RED_LIGHT_2_GPIO_Port, RED_LIGHT_2_Pin, 0);
+			}
 			DCMotor_handleRequest(&motortask);
 		}
 		osDelay(10);
 	}
-	/* USER CODE END StartmotorTask */
+  /* USER CODE END StartmotorTask */
 }
 
 /* USER CODE BEGIN Header_StartACCTask */
@@ -248,7 +288,7 @@ void StartmotorTask(void *argument)
 /* USER CODE END Header_StartACCTask */
 void StartACCTask(void *argument)
 {
-	/* USER CODE BEGIN StartACCTask */
+  /* USER CODE BEGIN StartACCTask */
 	static uint8_t TRIG_Ticks = 0;
 	static double prev_distance;
 	static double prev_distances[2];
@@ -529,7 +569,7 @@ void StartACCTask(void *argument)
 		}
 		osDelay(20);
 	}
-	/* USER CODE END StartACCTask */
+  /* USER CODE END StartACCTask */
 }
 
 /* USER CODE BEGIN Header_StartNormalMode */
@@ -541,19 +581,12 @@ void StartACCTask(void *argument)
 /* USER CODE END Header_StartNormalMode */
 void StartNormalMode(void *argument)
 {
-	/* USER CODE BEGIN StartNormalMode */
+  /* USER CODE BEGIN StartNormalMode */
 	/* Infinite loop */
 	for(;;)
 	{
 		if(Car_Current_Mode == NORMAL_MODE)
 		{
-			Buffer_GUI[MODE_DIG_1_IDx] = CHARACTER_ZERO;
-			Buffer_GUI[MODE_DIG_2_IDx] = CHARACTER_ZERO;
-
-			Buffer_GUI[SPEED_DIG_1_IDx] = ((Car_Current_Speed  * 2) / 100) + CHARACTER_ZERO;
-			Buffer_GUI[SPEED_DIG_2_IDx] = (((Car_Current_Speed * 2) / 10) % 10) + CHARACTER_ZERO;
-			Buffer_GUI[SPEED_DIG_3_IDx] = ((Car_Current_Speed  * 2) % 10) + CHARACTER_ZERO;
-
 			if(Car_Current_Status == CAR_RUNNING)
 			{
 				switch (Car_Current_Direction)
@@ -592,7 +625,7 @@ void StartNormalMode(void *argument)
 		}
 		osDelay(10);
 	}
-	/* USER CODE END StartNormalMode */
+  /* USER CODE END StartNormalMode */
 }
 
 /* USER CODE BEGIN Header_StartGUI_UpdateTask */
@@ -604,11 +637,30 @@ void StartNormalMode(void *argument)
 /* USER CODE END Header_StartGUI_UpdateTask */
 void StartGUI_UpdateTask(void *argument)
 {
-	/* USER CODE BEGIN StartGUI_UpdateTask */
+  /* USER CODE BEGIN StartGUI_UpdateTask */
 	/* Infinite loop */
 	for(;;)
 	{
-		if(GUI_TRANSMIT_INSTANT == 1 )
+		switch(Car_Current_Mode)
+		{
+		case NORMAL_MODE:
+			Buffer_GUI[MODE_DIG_1_IDx] = CHARACTER_ZERO;
+			Buffer_GUI[MODE_DIG_2_IDx] = CHARACTER_ZERO;
+			break;
+		case ACC_MODE:
+			Buffer_GUI[MODE_DIG_1_IDx] = CHARACTER_ZERO;
+			Buffer_GUI[MODE_DIG_2_IDx] = CHARACTER_ONE;
+			break;
+		case SELF_DRIVING_MODE:
+			Buffer_GUI[MODE_DIG_1_IDx] = CHARACTER_ONE;
+			Buffer_GUI[MODE_DIG_2_IDx] = CHARACTER_ZERO;
+			break;
+		}
+
+		Buffer_GUI[SPEED_DIG_1_IDx] = ((Car_Current_Speed  * 2) / 100) + CHARACTER_ZERO;
+		Buffer_GUI[SPEED_DIG_2_IDx] = (((Car_Current_Speed * 2) / 10) % 10) + CHARACTER_ZERO;
+		Buffer_GUI[SPEED_DIG_3_IDx] = ((Car_Current_Speed  * 2) % 10) + CHARACTER_ZERO;
+		//if(GUI_TRANSMIT_INSTANT == 1 )
 		{
 			HAL_UART_Transmit(&huart2, Buffer_GUI, 14, 20);
 			/********* To Protect Global Variable "GUI_TRANSMIT_INSTANT" *********/
@@ -616,9 +668,9 @@ void StartGUI_UpdateTask(void *argument)
 			GUI_TRANSMIT_INSTANT = 0 ;   //TODO:: Disable/Enable EXTI - IR
 			//		HAL_NVIC_EnableIRQ(USART2_IRQn);
 		}
-		osDelay(10);
+		osDelay(100);
 	}
-	/* USER CODE END StartGUI_UpdateTask */
+  /* USER CODE END StartGUI_UpdateTask */
 }
 
 /* USER CODE BEGIN Header_StartSelfDrivingTask */
@@ -630,7 +682,7 @@ void StartGUI_UpdateTask(void *argument)
 /* USER CODE END Header_StartSelfDrivingTask */
 void StartSelfDrivingTask(void *argument)
 {
-	/* USER CODE BEGIN StartSelfDrivingTask */
+  /* USER CODE BEGIN StartSelfDrivingTask */
 	static uint8_t TRIG_Ticks = 0;
 	/* Infinite loop */
 	for(;;)
@@ -670,7 +722,10 @@ void StartSelfDrivingTask(void *argument)
 					DCMotor_moveRight(turn_speed);
 					osDelay(400);
 					DCMotor_moveForward(last_speed);
-					osDelay(100);
+					osDelay(500);
+					DCMotor_moveLeft(turn_speed);
+					osDelay(400);
+					DCMotor_moveForward(last_speed);
 				}
 				else
 				{
@@ -689,7 +744,10 @@ void StartSelfDrivingTask(void *argument)
 					DCMotor_moveLeft(turn_speed);
 					osDelay(400);
 					DCMotor_moveForward(last_speed);
-					osDelay(100);
+					osDelay(500);
+					DCMotor_moveRight(turn_speed);
+					osDelay(400);
+					DCMotor_moveForward(last_speed);
 				}
 
 			}
@@ -701,7 +759,7 @@ void StartSelfDrivingTask(void *argument)
 		}
 		osDelay(30);
 	}
-	/* USER CODE END StartSelfDrivingTask */
+  /* USER CODE END StartSelfDrivingTask */
 }
 
 /* USER CODE BEGIN Header_LaneDepartureWarning */
@@ -713,7 +771,7 @@ void StartSelfDrivingTask(void *argument)
 /* USER CODE END Header_LaneDepartureWarning */
 void LaneDepartureWarning(void *argument)
 {
-	/* USER CODE BEGIN LaneDepartureWarning */
+  /* USER CODE BEGIN LaneDepartureWarning */
 	/* Infinite loop */
 	for(;;)
 	{
@@ -729,6 +787,7 @@ void LaneDepartureWarning(void *argument)
 		{
 			// Activate left lane warning
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,1);
+			Buffer_GUI[LANE_DIG_1_IDx] = 1;
 			osDelay(500);
 		}
 		else if(LeftIrCounter == 2 )
@@ -737,12 +796,14 @@ void LaneDepartureWarning(void *argument)
 			LeftIrCounter = 0;
 			RightIrCounter = 0;
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,0);
+			Buffer_GUI[LANE_DIG_1_IDx] = 0;
 			osDelay(500);
 		}
 		else if(RightIrCounter == 1 && LeftIrCounter == 0)
 		{
 			// Activate right lane warning
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,1);
+			Buffer_GUI[LANE_DIG_2_IDx] = 1;
 			osDelay(500);
 		}
 		else if(RightIrCounter == 2)
@@ -751,6 +812,7 @@ void LaneDepartureWarning(void *argument)
 			LeftIrCounter = 0;
 			RightIrCounter = 0;
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,0);
+			Buffer_GUI[LANE_DIG_2_IDx] = 0;
 			osDelay(500);
 		}
 		else if((RightIrCounter == 1 && LeftIrCounter == 1))
@@ -759,15 +821,17 @@ void LaneDepartureWarning(void *argument)
 			RightIrCounter = 0;
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,0);
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,0);
+			Buffer_GUI[LANE_DIG_1_IDx] = 0;
+			Buffer_GUI[LANE_DIG_2_IDx] = 0;
 			osDelay(500);
 		}
 		else
 		{
 			// No lane departure warning
-			osDelay(100);
+			osDelay(500);
 		}
 	}
-	/* USER CODE END LaneDepartureWarning */
+  /* USER CODE END LaneDepartureWarning */
 }
 
 /* USER CODE BEGIN Header_RainDetection */
@@ -779,7 +843,7 @@ void LaneDepartureWarning(void *argument)
 /* USER CODE END Header_RainDetection */
 void RainDetection(void *argument)
 {
-	/* USER CODE BEGIN RainDetection */
+  /* USER CODE BEGIN RainDetection */
 	/* Infinite loop */
 	/* Infinite loop */
 	int32_t RainDetectFlag = 0;
@@ -789,6 +853,7 @@ void RainDetection(void *argument)
 		if(HAL_GPIO_ReadPin(RAIN_SENSOR_GPIO_Port, RAIN_SENSOR_Pin)==1)
 		{
 			HAL_GPIO_WritePin(RAIN_LED_GPIO_Port, RAIN_LED_Pin, 1);
+			Buffer_GUI[RAIN_DIG_1_IDx] = 1;
 			if(RainDetectFlag==0)
 			{
 				//__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_1, 100);
@@ -806,12 +871,13 @@ void RainDetection(void *argument)
 		else
 		{
 			HAL_GPIO_WritePin(RAIN_LED_GPIO_Port, RAIN_LED_Pin, 0);
-
+			Buffer_GUI[RAIN_DIG_1_IDx] = 0;
 		}
-		osDelay(100);
-		/* USER CODE END RainDetection */
+		osDelay(500);
 	}
+  /* USER CODE END RainDetection */
 }
+
 /* USER CODE BEGIN Header_LaneKeepAssist */
 /**
  * @brief Function implementing the LKA_TASK thread.
@@ -821,7 +887,7 @@ void RainDetection(void *argument)
 /* USER CODE END Header_LaneKeepAssist */
 void LaneKeepAssist(void *argument)
 {
-	/* USER CODE BEGIN LaneKeepAssist */
+  /* USER CODE BEGIN LaneKeepAssist */
 	uint8_t laneKeepFlag=0;
 	/* Infinite loop */
 	for(;;)
@@ -858,7 +924,45 @@ void LaneKeepAssist(void *argument)
 		}
 		osDelay(100);
 	}
-	/* USER CODE END LaneKeepAssist */
+  /* USER CODE END LaneKeepAssist */
+}
+
+/* USER CODE BEGIN Header_StartBlindspot */
+/**
+* @brief Function implementing the Blindspot thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartBlindspot */
+void StartBlindspot(void *argument)
+{
+  /* USER CODE BEGIN StartBlindspot */
+  /* Infinite loop */
+  for(;;)
+  {
+	static uint8_t TRIG_Ticks = 0;
+	TRIG_Ticks++;
+	if(TRIG_Ticks >= 1)
+	{
+		HCSR04_Trigger(HCSR04_SENSOR2);
+		TRIG_Ticks = 0;
+	}
+	uint8_t blind_check = blindspot_isObjectDetected();
+	if(blind_check == 1)
+	{
+		// Toggle warning LED
+		HAL_GPIO_WritePin(BLIND_LED_GPIO_Port, BLIND_LED_Pin, 1);
+		Buffer_GUI[B_SPOT_DIG1_IDx] = Buffer_GUI[B_SPOT_DIG2_IDx] = 1;
+		osDelay(50);
+	}
+	else
+	{
+		HAL_GPIO_WritePin(BLIND_LED_GPIO_Port, BLIND_LED_Pin, 0);
+		Buffer_GUI[B_SPOT_DIG1_IDx] = Buffer_GUI[B_SPOT_DIG2_IDx] = 0;
+		osDelay(100);
+	}
+  }
+  /* USER CODE END StartBlindspot */
 }
 
 /* Private application code --------------------------------------------------*/

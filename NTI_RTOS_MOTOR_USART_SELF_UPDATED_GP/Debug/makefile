@@ -19,6 +19,7 @@ RM := rm -rf
 -include Core/SERVO/subdir.mk
 -include Core/HCSR04/subdir.mk
 -include Core/DCMotor/subdir.mk
+-include Core/Blindspot/subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -70,8 +71,8 @@ all: main-build
 main-build: NTI_RTOS_MOTOR_USART_SELF_UPDATED_GP.elf secondary-outputs
 
 # Tool invocations
-NTI_RTOS_MOTOR_USART_SELF_UPDATED_GP.elf NTI_RTOS_MOTOR_USART_SELF_UPDATED_GP.map: $(OBJS) $(USER_OBJS) D:\STM32CubeIDE\workspace_1.12.0\ADAS\NTI_RTOS_MOTOR_USART_SELF_UPDATED_GP\STM32F401RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "NTI_RTOS_MOTOR_USART_SELF_UPDATED_GP.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\STM32CubeIDE\workspace_1.12.0\ADAS\NTI_RTOS_MOTOR_USART_SELF_UPDATED_GP\STM32F401RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="NTI_RTOS_MOTOR_USART_SELF_UPDATED_GP.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+NTI_RTOS_MOTOR_USART_SELF_UPDATED_GP.elf NTI_RTOS_MOTOR_USART_SELF_UPDATED_GP.map: $(OBJS) $(USER_OBJS) C:\Users\Kirollos\Documents\GitHub\ADAS\NTI_RTOS_MOTOR_USART_SELF_UPDATED_GP\STM32F401RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "NTI_RTOS_MOTOR_USART_SELF_UPDATED_GP.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Kirollos\Documents\GitHub\ADAS\NTI_RTOS_MOTOR_USART_SELF_UPDATED_GP\STM32F401RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="NTI_RTOS_MOTOR_USART_SELF_UPDATED_GP.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

@@ -39,7 +39,8 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h \
  ../Core/Src/../HCSR04/HCSR04.h ../Core/Src/../DCMotor/DCMotor.h \
- ../Core/Src/../SERVO/SERVO.h ../Core/Inc/tim.h ../Core/Inc/main.h
+ ../Core/Src/../SERVO/SERVO.h ../Core/Src/../Blindspot/blindspot_assist.h \
+ ../Core/Inc/tim.h ../Core/Inc/main.h
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
@@ -83,5 +84,6 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
 ../Core/Src/../HCSR04/HCSR04.h:
 ../Core/Src/../DCMotor/DCMotor.h:
 ../Core/Src/../SERVO/SERVO.h:
+../Core/Src/../Blindspot/blindspot_assist.h:
 ../Core/Inc/tim.h:
 ../Core/Inc/main.h:

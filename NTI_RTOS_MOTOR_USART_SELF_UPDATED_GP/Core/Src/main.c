@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "../HCSR04/HCSR04.h"
 #include "../SERVO/SERVO.h"
+#include "../DCMotor/DCMotor.h"
 #include <stdlib.h>
 /* USER CODE END Includes */
 
@@ -220,7 +221,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	}
 	else
 	{
-		Car_Current_Speed = Buffer_ASCII_TO_INT - CAR_SPEED_OFFSET ;
+		if(Car_Current_Speed != (Buffer_ASCII_TO_INT - CAR_SPEED_OFFSET))
+		{
+			Car_Current_Speed = Buffer_ASCII_TO_INT - CAR_SPEED_OFFSET ;
+			DCMotor_changeSpeed(Car_Current_Speed);
+		}
 		Car_Current_Status = CAR_RUNNING ;
 
 	}

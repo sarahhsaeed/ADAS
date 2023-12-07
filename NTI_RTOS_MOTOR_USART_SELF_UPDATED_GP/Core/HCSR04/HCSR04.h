@@ -19,7 +19,7 @@
 
 
 // The Number OF HC-SR04 Ultrasonic Sensors To Be Used In The Project
-#define HCSR04_UNITS  1
+#define HCSR04_UNITS  2
 
 typedef struct
 {
@@ -29,6 +29,9 @@ typedef struct
 	uint32_t       IC_TIM_CH;
 	uint32_t       TIM_CLK_MHz;
 }HCSR04_CfgType;
+
+#define HCSR04_SENSOR1  0
+#define HCSR04_SENSOR2  1
 
 
 /*-----[ Prototypes For All Functions ]-----*/

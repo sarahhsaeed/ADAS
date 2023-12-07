@@ -12,7 +12,12 @@ typedef struct
 {
 	struct motorControl_entity
 	{
-		uint8_t modify;
+		enum{
+			MOTOR_MODIFY_NONE 	= 0x00,
+			MOTOR_MODIFY_DIR 	= 0x01,
+			MOTOR_MODIFY_SPEED 	= 0x02,
+			MOTOR_MODIFY_ALL	= 0x03
+		} modify;
 		uint8_t speed;
 		enum
 		{
@@ -23,11 +28,14 @@ typedef struct
 	} motors[2];
 } motorControl_t;
 
+#define MOTOR_TURN_SPEED	(80)
+
 void DCMotor_stop(void);
 void DCMotor_moveForward(uint8_t speed);
 void DCMotor_moveBackward(uint8_t speed);
 void DCMotor_moveLeft(uint8_t speed);
 void DCMotor_moveRight(uint8_t speed);
+void DCMotor_changeSpeed(uint8_t speed);
 
 void DCMotor_handleRequest(motorControl_t* motorRequest);
 

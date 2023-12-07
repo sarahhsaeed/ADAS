@@ -3,4 +3,5 @@
 ../Core/DCMotor/DCMotor.c:41:6:DCMotor_moveBackward	24	static
 ../Core/DCMotor/DCMotor.c:53:6:DCMotor_moveLeft	24	static
 ../Core/DCMotor/DCMotor.c:67:6:DCMotor_moveRight	24	static
-../Core/DCMotor/DCMotor.c:81:6:DCMotor_handleRequest	32	static
+../Core/DCMotor/DCMotor.c:85:6:DCMotor_changeSpeed	24	static
+../Core/DCMotor/DCMotor.c:96:6:DCMotor_handleRequest	32	static

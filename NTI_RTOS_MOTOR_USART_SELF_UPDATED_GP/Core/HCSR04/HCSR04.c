@@ -145,7 +145,8 @@ void HCSR04_TMR_IC_ISR(TIM_HandleTypeDef* htim)
 	uint32_t PS = 0;
 	for(i=0; i<HCSR04_UNITS; i++)
 	{
-		if((htim->Instance == HCSR04_CfgParam[i].TIM_Instance)/* && (htim->Channel == gs_HCSR04_info[i].ACTIV_CH)*/)
+		//if((htim->Instance == HCSR04_CfgParam[i].TIM_Instance)/* && (htim->Channel == gs_HCSR04_info[i].ACTIV_CH)*/)
+		if((htim->Instance == HCSR04_CfgParam[i].TIM_Instance) && (htim->Channel == gs_HCSR04_info[i].ACTIV_CH))
 		{
 			if (gs_HCSR04_info[i].EDGE_STATE == 0)
 			{

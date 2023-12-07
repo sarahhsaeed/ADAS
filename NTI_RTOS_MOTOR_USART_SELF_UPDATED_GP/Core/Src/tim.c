@@ -77,6 +77,10 @@ void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_IC_ConfigChannel(&htim2, &sConfigIC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN TIM2_Init 2 */
 
   /* USER CODE END TIM2_Init 2 */
@@ -239,8 +243,10 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
     __HAL_RCC_TIM2_CLK_ENABLE();
 
     __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
     /**TIM2 GPIO Configuration
     PA5     ------> TIM2_CH1
+    PB3     ------> TIM2_CH2
     */
     GPIO_InitStruct.Pin = GPIO_PIN_5;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -248,6 +254,13 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF1_TIM2;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_3;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF1_TIM2;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
     /* TIM2 interrupt Init */
     HAL_NVIC_SetPriority(TIM2_IRQn, 5, 0);
@@ -378,8 +391,11 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 
     /**TIM2 GPIO Configuration
     PA5     ------> TIM2_CH1
+    PB3     ------> TIM2_CH2
     */
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_5);
+
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_3);
 
     /* TIM2 interrupt Deinit */
     HAL_NVIC_DisableIRQ(TIM2_IRQn);
@@ -430,6 +446,7 @@ void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* tim_pwmHandle)
 /* USER CODE BEGIN 1 */
 void Motor1_SetSpeed(double speed)
 {
+	/*
 	  TIM_OC_InitTypeDef sConfigOC = {0};
 	sConfigOC.OCMode = TIM_OCMODE_PWM1;
 	sConfigOC.Pulse = (speed/100.0) * (20000-1);
@@ -441,10 +458,13 @@ void Motor1_SetSpeed(double speed)
 	  }
 	  HAL_TIM_PWM_Stop(&htim5, TIM_CHANNEL_1);
 	  HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
+	  */
+	__HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, ((speed/100.0) * (20000-1)));
 }
 
 void Motor2_SetSpeed(double speed)
 {
+	/*
 	  TIM_OC_InitTypeDef sConfigOC = {0};
 	sConfigOC.OCMode = TIM_OCMODE_PWM1;
 	  sConfigOC.Pulse = (speed/100.0) * (20000-1);
@@ -456,6 +476,8 @@ void Motor2_SetSpeed(double speed)
 	  }
 	  HAL_TIM_PWM_Stop(&htim5, TIM_CHANNEL_2);
 	  HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
+	  */
+	  __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, ((speed/100.0) * (20000-1)));
 }
 
 void Motors_GetSpeeds(double *m1_speed, double *m2_speed)
