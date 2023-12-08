@@ -69,7 +69,7 @@ extern "C" {
 #define CAR_DEFAULT_MODE              0
 
 #define CAR_SPEED_OFFSET              1000
-#define Car_self_Speed                70
+#define Car_self_Speed                90
 #define SELF_DRIVING_CRITICAL_RANGE   30
 #define SERVO_MOTOR1    0
 #define SERVO_MOTOR2    1
@@ -106,6 +106,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define RED_LIGHT_2_Pin GPIO_PIN_14
+#define RED_LIGHT_2_GPIO_Port GPIOC
+#define RED_LIGHT_1_Pin GPIO_PIN_15
+#define RED_LIGHT_1_GPIO_Port GPIOC
 #define MOTOR_EN1_Pin GPIO_PIN_0
 #define MOTOR_EN1_GPIO_Port GPIOA
 #define MOTOR_EN2_Pin GPIO_PIN_1
@@ -122,12 +126,6 @@ void Error_Handler(void);
 #define RIGHT_IR_EXTI_IRQn EXTI1_IRQn
 #define RAIN_SENSOR_Pin GPIO_PIN_2
 #define RAIN_SENSOR_GPIO_Port GPIOB
-#define RED_LIGHT_2_Pin GPIO_PIN_7
-#define RED_LIGHT_2_GPIO_Port GPIOC
-#define RED_LIGHT_1_Pin GPIO_PIN_8
-#define RED_LIGHT_1_GPIO_Port GPIOC
-#define RAIN_LED_Pin GPIO_PIN_8
-#define RAIN_LED_GPIO_Port GPIOA
 #define BLIND_LED_Pin GPIO_PIN_9
 #define BLIND_LED_GPIO_Port GPIOA
 #define MOTOR_IN4_Pin GPIO_PIN_10

@@ -126,7 +126,7 @@ int main(void)
 
   /**********************************************/
 //  HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-  HAL_NVIC_DisableIRQ(EXTI1_IRQn);
+  //HAL_NVIC_DisableIRQ(EXTI1_IRQn);
   /**********************************************/
 
 
@@ -244,10 +244,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	switch(GPIO_Pin)
 	{
 	case LEFT_IR_Pin:
-		LeftIrCounter++;
+		//LeftIrCounter++;
 		break;
 	case RIGHT_IR_Pin:
-		RightIrCounter++;
+		//RightIrCounter++;
 		break;
 	}
 }
