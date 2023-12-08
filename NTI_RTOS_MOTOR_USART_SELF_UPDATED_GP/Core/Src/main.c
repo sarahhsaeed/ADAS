@@ -124,6 +124,12 @@ int main(void)
   /* UART Receive */
   HAL_UART_Receive_IT(&huart2, (uint8_t*)Buffer, 4);
 
+  /**********************************************/
+//  HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+  HAL_NVIC_DisableIRQ(EXTI1_IRQn);
+  /**********************************************/
+
+
   /* USER CODE END 2 */
 
   /* Init scheduler */

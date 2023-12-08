@@ -69,8 +69,8 @@ extern "C" {
 #define CAR_DEFAULT_MODE              0
 
 #define CAR_SPEED_OFFSET              1000
-
-#define SELF_DRIVING_CRITICAL_RANGE   20
+#define Car_self_Speed                70
+#define SELF_DRIVING_CRITICAL_RANGE   30
 #define SERVO_MOTOR1    0
 #define SERVO_MOTOR2    1
 

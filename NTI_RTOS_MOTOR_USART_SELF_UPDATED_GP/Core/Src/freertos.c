@@ -67,70 +67,70 @@ float Distance_Left = 0.0;
 /* Definitions for motorTask */
 osThreadId_t motorTaskHandle;
 const osThreadAttr_t motorTask_attributes = {
-  .name = "motorTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityRealtime,
+		.name = "motorTask",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityRealtime,
 };
 /* Definitions for ACCTask */
 osThreadId_t ACCTaskHandle;
 const osThreadAttr_t ACCTask_attributes = {
-  .name = "ACCTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
+		.name = "ACCTask",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityHigh,
 };
 /* Definitions for NormalModeTask */
 osThreadId_t NormalModeTaskHandle;
 const osThreadAttr_t NormalModeTask_attributes = {
-  .name = "NormalModeTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh1,
+		.name = "NormalModeTask",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityHigh1,
 };
 /* Definitions for GUI_UpdateTask */
 osThreadId_t GUI_UpdateTaskHandle;
 const osThreadAttr_t GUI_UpdateTask_attributes = {
-  .name = "GUI_UpdateTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+		.name = "GUI_UpdateTask",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for SelfDrivingTask */
 osThreadId_t SelfDrivingTaskHandle;
 const osThreadAttr_t SelfDrivingTask_attributes = {
-  .name = "SelfDrivingTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityAboveNormal7,
+		.name = "SelfDrivingTask",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityAboveNormal7,
 };
 /* Definitions for LDW_TASK */
 osThreadId_t LDW_TASKHandle;
 const osThreadAttr_t LDW_TASK_attributes = {
-  .name = "LDW_TASK",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+		.name = "LDW_TASK",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for RainDetect_TASK */
 osThreadId_t RainDetect_TASKHandle;
 const osThreadAttr_t RainDetect_TASK_attributes = {
-  .name = "RainDetect_TASK",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+		.name = "RainDetect_TASK",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for LKA_TASK */
 osThreadId_t LKA_TASKHandle;
 const osThreadAttr_t LKA_TASK_attributes = {
-  .name = "LKA_TASK",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+		.name = "LKA_TASK",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for Blindspot */
 osThreadId_t BlindspotHandle;
 const osThreadAttr_t Blindspot_attributes = {
-  .name = "Blindspot",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+		.name = "Blindspot",
+		.stack_size = 128 * 4,
+		.priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for motorQueue */
 osMessageQueueId_t motorQueueHandle;
 const osMessageQueueAttr_t motorQueue_attributes = {
-  .name = "motorQueue"
+		.name = "motorQueue"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -153,70 +153,70 @@ void StartBlindspot(void *argument);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
-  * @brief  FreeRTOS initialization
-  * @param  None
-  * @retval None
-  */
+ * @brief  FreeRTOS initialization
+ * @param  None
+ * @retval None
+ */
 void MX_FREERTOS_Init(void) {
-  /* USER CODE BEGIN Init */
+	/* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+	/* USER CODE END Init */
 
-  /* USER CODE BEGIN RTOS_MUTEX */
+	/* USER CODE BEGIN RTOS_MUTEX */
 	/* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
+	/* USER CODE END RTOS_MUTEX */
 
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
+	/* USER CODE BEGIN RTOS_SEMAPHORES */
 	/* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
+	/* USER CODE END RTOS_SEMAPHORES */
 
-  /* USER CODE BEGIN RTOS_TIMERS */
+	/* USER CODE BEGIN RTOS_TIMERS */
 	/* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
+	/* USER CODE END RTOS_TIMERS */
 
-  /* Create the queue(s) */
-  /* creation of motorQueue */
-  motorQueueHandle = osMessageQueueNew (16, sizeof(motorControl_t), &motorQueue_attributes);
+	/* Create the queue(s) */
+	/* creation of motorQueue */
+	motorQueueHandle = osMessageQueueNew (16, sizeof(motorControl_t), &motorQueue_attributes);
 
-  /* USER CODE BEGIN RTOS_QUEUES */
+	/* USER CODE BEGIN RTOS_QUEUES */
 	/* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
+	/* USER CODE END RTOS_QUEUES */
 
-  /* Create the thread(s) */
-  /* creation of motorTask */
-  motorTaskHandle = osThreadNew(StartmotorTask, NULL, &motorTask_attributes);
+	/* Create the thread(s) */
+	/* creation of motorTask */
+	motorTaskHandle = osThreadNew(StartmotorTask, NULL, &motorTask_attributes);
 
-  /* creation of ACCTask */
-  ACCTaskHandle = osThreadNew(StartACCTask, NULL, &ACCTask_attributes);
+	/* creation of ACCTask */
+	ACCTaskHandle = osThreadNew(StartACCTask, NULL, &ACCTask_attributes);
 
-  /* creation of NormalModeTask */
-  NormalModeTaskHandle = osThreadNew(StartNormalMode, NULL, &NormalModeTask_attributes);
+	/* creation of NormalModeTask */
+	NormalModeTaskHandle = osThreadNew(StartNormalMode, NULL, &NormalModeTask_attributes);
 
-  /* creation of GUI_UpdateTask */
-  GUI_UpdateTaskHandle = osThreadNew(StartGUI_UpdateTask, NULL, &GUI_UpdateTask_attributes);
+	/* creation of GUI_UpdateTask */
+	GUI_UpdateTaskHandle = osThreadNew(StartGUI_UpdateTask, NULL, &GUI_UpdateTask_attributes);
 
-  /* creation of SelfDrivingTask */
-  SelfDrivingTaskHandle = osThreadNew(StartSelfDrivingTask, NULL, &SelfDrivingTask_attributes);
+	/* creation of SelfDrivingTask */
+	SelfDrivingTaskHandle = osThreadNew(StartSelfDrivingTask, NULL, &SelfDrivingTask_attributes);
 
-  /* creation of LDW_TASK */
-  LDW_TASKHandle = osThreadNew(LaneDepartureWarning, NULL, &LDW_TASK_attributes);
+	/* creation of LDW_TASK */
+	LDW_TASKHandle = osThreadNew(LaneDepartureWarning, NULL, &LDW_TASK_attributes);
 
-  /* creation of RainDetect_TASK */
-  RainDetect_TASKHandle = osThreadNew(RainDetection, NULL, &RainDetect_TASK_attributes);
+	/* creation of RainDetect_TASK */
+	RainDetect_TASKHandle = osThreadNew(RainDetection, NULL, &RainDetect_TASK_attributes);
 
-  /* creation of LKA_TASK */
-  LKA_TASKHandle = osThreadNew(LaneKeepAssist, NULL, &LKA_TASK_attributes);
+	/* creation of LKA_TASK */
+	LKA_TASKHandle = osThreadNew(LaneKeepAssist, NULL, &LKA_TASK_attributes);
 
-  /* creation of Blindspot */
-  BlindspotHandle = osThreadNew(StartBlindspot, NULL, &Blindspot_attributes);
+	/* creation of Blindspot */
+	BlindspotHandle = osThreadNew(StartBlindspot, NULL, &Blindspot_attributes);
 
-  /* USER CODE BEGIN RTOS_THREADS */
+	/* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
+	/* USER CODE END RTOS_THREADS */
 
-  /* USER CODE BEGIN RTOS_EVENTS */
+	/* USER CODE BEGIN RTOS_EVENTS */
 	/* add events, ... */
-  /* USER CODE END RTOS_EVENTS */
+	/* USER CODE END RTOS_EVENTS */
 
 }
 
@@ -229,7 +229,7 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartmotorTask */
 void StartmotorTask(void *argument)
 {
-  /* USER CODE BEGIN StartmotorTask */
+	/* USER CODE BEGIN StartmotorTask */
 	/* Infinite loop */
 	for(;;)
 	{
@@ -276,7 +276,7 @@ void StartmotorTask(void *argument)
 		}
 		osDelay(10);
 	}
-  /* USER CODE END StartmotorTask */
+	/* USER CODE END StartmotorTask */
 }
 
 /* USER CODE BEGIN Header_StartACCTask */
@@ -288,7 +288,7 @@ void StartmotorTask(void *argument)
 /* USER CODE END Header_StartACCTask */
 void StartACCTask(void *argument)
 {
-  /* USER CODE BEGIN StartACCTask */
+	/* USER CODE BEGIN StartACCTask */
 	static uint8_t TRIG_Ticks = 0;
 	static double prev_distance;
 	static double prev_distances[2];
@@ -569,7 +569,7 @@ void StartACCTask(void *argument)
 		}
 		osDelay(50);
 	}
-  /* USER CODE END StartACCTask */
+	/* USER CODE END StartACCTask */
 }
 
 /* USER CODE BEGIN Header_StartNormalMode */
@@ -581,7 +581,7 @@ void StartACCTask(void *argument)
 /* USER CODE END Header_StartNormalMode */
 void StartNormalMode(void *argument)
 {
-  /* USER CODE BEGIN StartNormalMode */
+	/* USER CODE BEGIN StartNormalMode */
 	/* Infinite loop */
 	for(;;)
 	{
@@ -625,7 +625,7 @@ void StartNormalMode(void *argument)
 		}
 		osDelay(10);
 	}
-  /* USER CODE END StartNormalMode */
+	/* USER CODE END StartNormalMode */
 }
 
 /* USER CODE BEGIN Header_StartGUI_UpdateTask */
@@ -637,7 +637,7 @@ void StartNormalMode(void *argument)
 /* USER CODE END Header_StartGUI_UpdateTask */
 void StartGUI_UpdateTask(void *argument)
 {
-  /* USER CODE BEGIN StartGUI_UpdateTask */
+	/* USER CODE BEGIN StartGUI_UpdateTask */
 	/* Infinite loop */
 	for(;;)
 	{
@@ -670,7 +670,7 @@ void StartGUI_UpdateTask(void *argument)
 		}
 		osDelay(100);
 	}
-  /* USER CODE END StartGUI_UpdateTask */
+	/* USER CODE END StartGUI_UpdateTask */
 }
 
 /* USER CODE BEGIN Header_StartSelfDrivingTask */
@@ -682,162 +682,294 @@ void StartGUI_UpdateTask(void *argument)
 /* USER CODE END Header_StartSelfDrivingTask */
 void StartSelfDrivingTask(void *argument)
 {
-  /* USER CODE BEGIN StartSelfDrivingTask */
+	/* USER CODE BEGIN StartSelfDrivingTask */
+
 	static uint8_t TRIG_Ticks = 0;
+	//static uint8_t mode_first_called = 0;
+	//	Car_Current_Speed = 55;
+	SERVO_MoveTo(SERVO_MOTOR1,100);
 	/* Infinite loop */
 	for(;;)
 	{
 		if(Car_Current_Mode == SELF_DRIVING_MODE)
 		{
+			// Distance = HCSR04_Read(HCSR04_SENSOR1);
+			HCSR04_Trigger(HCSR04_SENSOR1);
+			HAL_Delay(100);
 			Distance = HCSR04_Read(HCSR04_SENSOR1);
-			/*if(Distance == prev_distances[0] && Distance == prev_distances[1])
-		  	  {
-		  		  Distance = 9999.0;
-		  	  }*/
-			TRIG_Ticks++;
-			if(TRIG_Ticks >= 1)
-			{
-				HCSR04_Trigger(HCSR04_SENSOR1);
-				TRIG_Ticks = 0;
-			}
+
 			if (Distance <= SELF_DRIVING_CRITICAL_RANGE)
 			{
-				uint8_t last_speed = Car_Current_Speed;
-				const uint8_t turn_speed = 80;
-				SelfDrivingCheck_side(); /* Check both sides - Left and Right - to get a decision for diversion */
-				if(Distance_Left > Distance_Right)
-				{
-					/*DCMotor_moveLeft(turn_speed);
-					osDelay(500);
-					DCMotor_moveForward(last_speed);
-					osDelay(600);
-					DCMotor_stop();
-					osDelay(100);
-					DCMotor_moveRight(turn_speed);
-					osDelay(500);
-					DCMotor_moveForward(last_speed);
-					osDelay(600);
-					DCMotor_stop();
-					osDelay(100);
-					DCMotor_moveRight(turn_speed);
-					osDelay(400);
-					DCMotor_moveForward(last_speed);
-					osDelay(500);
-					DCMotor_moveLeft(turn_speed);
-					osDelay(400);
-					DCMotor_moveForward(last_speed);*/
-					DCMotor_moveLeft(turn_speed);
-					osDelay(10);
-					uint8_t tick = 0;
-					while(1)
-					{
-						HCSR04_Trigger(HCSR04_SENSOR1);
-						osDelay(50);
-						double d = HCSR04_Read(HCSR04_SENSOR1);
-						tick++;
-						if(d >= Distance_Left)
-							break;
-					}
-					DCMotor_stop();
-					SERVO_MoveTo(SERVO_MOTOR1, SERVO_ANGLE_RIGHT);
-					osDelay(100);
-					DCMotor_moveForward(last_speed);
-					osDelay(10);
-					while(1)
-					{
-						HCSR04_Trigger(HCSR04_SENSOR1);
-						osDelay(50);
-						double d = HCSR04_Read(HCSR04_SENSOR1);
-						if(d >= SELF_DRIVING_CRITICAL_RANGE)
-							break;
-					}
-					DCMotor_stop();
-					SERVO_MoveTo(SERVO_MOTOR1, SERVO_ANGLE_CENTER);
-					osDelay(100);
 
-					DCMotor_moveLeft(turn_speed);
-					osDelay(10);
-					while(--tick)
-					{
-						osDelay(50);
-					}
+				DCMotor_stop();
+				osDelay(500);
+				DCMotor_moveBackward(Car_self_Speed);
+				osDelay(500); /* 500 */
+				DCMotor_stop();
+				osDelay(500); /* 15 */
+				/* Servo turn to Right (120) then read distance*/
+				SERVO_MoveTo(SERVO_MOTOR1,45);
+				osDelay(500);
+				HCSR04_Trigger(HCSR04_SENSOR1);
+				//osDelay(500);
+				Distance_Right = HCSR04_Read(HCSR04_SENSOR1);
+				SERVO_MoveTo(SERVO_MOTOR1,100);
+				osDelay(500);
+				/* Servo turn to Left (60) then read distance*/
+				SERVO_MoveTo(SERVO_MOTOR1,155);
+				osDelay(500);
+				HCSR04_Trigger(HCSR04_SENSOR1);
+				//osDelay(500);
+				Distance_Left = HCSR04_Read(HCSR04_SENSOR1);
+				/* Servo turn to origin (115) then read distance*/
+				SERVO_MoveTo(SERVO_MOTOR1,100);
+				if(1==0)
+				{
+					DCMotor_moveLeft(Car_self_Speed);
+					osDelay(1200);
 					DCMotor_stop();
-					osDelay(100);
-					DCMotor_moveForward(last_speed);
-					osDelay(10);
+					osDelay(1200);
+					DCMotor_moveForward(Car_self_Speed);
+					osDelay(800);
+					DCMotor_stop();
+					osDelay(1200);
+					DCMotor_moveRight(Car_self_Speed);
+					osDelay(600);
+					DCMotor_stop();
+					osDelay(1200);
+					DCMotor_moveForward(Car_self_Speed); // parralle  to origin
+					osDelay(1000);
+					DCMotor_stop();
+					osDelay(1200);
+					DCMotor_moveRight(Car_self_Speed);
+					osDelay(400);
+					DCMotor_stop();
+					osDelay(1200);
+					DCMotor_moveForward(Car_self_Speed);
+					osDelay(800);
+					DCMotor_stop();
+					osDelay(600);
+					for(uint8_t i=0;i<10;i++)
+					{
+						DCMotor_moveLeft(Car_self_Speed);
+						osDelay(50);
+						DCMotor_moveForward(Car_self_Speed);
+						osDelay(5);
+					}
 				}
 				else
 				{
-					/*DCMotor_moveRight(turn_speed);
-					osDelay(500);
-					DCMotor_moveForward(last_speed);
+					DCMotor_moveRight(Car_self_Speed);
 					osDelay(600);
 					DCMotor_stop();
-					osDelay(100);
-					DCMotor_moveLeft(turn_speed);
-					osDelay(500);
-					DCMotor_moveForward(last_speed);
-					osDelay(600);
+					osDelay(1400);
+					DCMotor_moveForward(Car_self_Speed);
+					osDelay(700);
 					DCMotor_stop();
-					osDelay(100);
-					DCMotor_moveLeft(turn_speed);
+					osDelay(1200);
+					DCMotor_moveLeft(Car_self_Speed);
 					osDelay(400);
-					DCMotor_moveForward(last_speed);
-					osDelay(500);
-					DCMotor_moveRight(turn_speed);
-					osDelay(400);
-					DCMotor_moveForward(last_speed);*/
-					DCMotor_moveRight(turn_speed);
-					osDelay(10);
-					uint8_t tick = 0;
-					while(1)
-					{
-						HCSR04_Trigger(HCSR04_SENSOR1);
-						osDelay(50);
-						double d = HCSR04_Read(HCSR04_SENSOR1);
-						tick++;
-						if(d >= Distance_Right)
-							break;
-					}
 					DCMotor_stop();
-					SERVO_MoveTo(SERVO_MOTOR1, SERVO_ANGLE_LEFT);
-					osDelay(100);
-					DCMotor_moveForward(last_speed);
-					osDelay(10);
-					while(1)
-					{
-						HCSR04_Trigger(HCSR04_SENSOR1);
-						osDelay(50);
-						double d = HCSR04_Read(HCSR04_SENSOR1);
-						if(d >= SELF_DRIVING_CRITICAL_RANGE)
-							break;
-					}
-					DCMotor_stop();
-					SERVO_MoveTo(SERVO_MOTOR1, SERVO_ANGLE_CENTER);
-					osDelay(100);
+					osDelay(1200);
+					DCMotor_moveForward(Car_self_Speed); // parralle  to origin
 
-					DCMotor_moveRight(turn_speed);
-					osDelay(10);
-					while(--tick)
-					{
-						osDelay(50);
-					}
+					osDelay(1000);
+					DCMotor_moveLeft(Car_self_Speed);
+					osDelay(600);
+					DCMotor_moveForward(Car_self_Speed);
+					osDelay(600);
 					DCMotor_stop();
-					osDelay(100);
-					DCMotor_moveForward(last_speed);
-					osDelay(10);
+					osDelay(2000);
+					DCMotor_moveRight(Car_self_Speed);
+					osDelay(700);
+					DCMotor_stop();
+					osDelay(2000);
+
+					/*
+								osDelay(1000);
+								DCMotor_stop();
+								osDelay(1200);
+								DCMotor_moveLeft(Car_self_Speed);
+								osDelay(700);
+								DCMotor_stop();
+								osDelay(1200);
+								DCMotor_moveForward(Car_self_Speed);
+								osDelay(1200);
+								DCMotor_stop();
+								osDelay(600);
+								 DCMotor_moveRight(Car_self_Speed);
+								 osDelay(800);
+								 DCMotor_moveForward(Car_self_Speed);
+								 osDelay(5);
+					 */
+
 				}
 
 			}
 
 			else
 			{
-				DCMotor_moveForward(Car_Current_Speed);  //Just keeping forward if there is no obstacles in front of the car
+				DCMotor_moveForward(Car_Current_Speed);  // Just keeping forward if there is no obstacles in front of the car
 			}
 		}
-		osDelay(30);
+		osDelay(10);
 	}
-  /* USER CODE END StartSelfDrivingTask */
+
+	//	static uint8_t TRIG_Ticks = 0;
+	//	/* Infinite loop */
+	//	for(;;)
+	//	{
+	//		if(Car_Current_Mode == SELF_DRIVING_MODE)
+	//		{
+	//			Distance = HCSR04_Read(HCSR04_SENSOR1);
+	//			/*if(Distance == prev_distances[0] && Distance == prev_distances[1])
+	//		  	  {
+	//		  		  Distance = 9999.0;
+	//		  	  }*/
+	//			TRIG_Ticks++;
+	//			if(TRIG_Ticks >= 1)
+	//			{
+	//				HCSR04_Trigger(HCSR04_SENSOR1);
+	//				TRIG_Ticks = 0;
+	//			}
+	//			if (Distance <= SELF_DRIVING_CRITICAL_RANGE)
+	//			{
+	//				uint8_t last_speed = Car_Current_Speed;
+	//				const uint8_t turn_speed = 80;
+	//				SelfDrivingCheck_side(); /* Check both sides - Left and Right - to get a decision for diversion */
+	//				if(Distance_Left > Distance_Right)
+	//				{
+	//					/*DCMotor_moveLeft(turn_speed);
+	//					osDelay(500);
+	//					DCMotor_moveForward(last_speed);
+	//					osDelay(600);
+	//					DCMotor_stop();
+	//					osDelay(100);
+	//					DCMotor_moveRight(turn_speed);
+	//					osDelay(500);
+	//					DCMotor_moveForward(last_speed);
+	//					osDelay(600);
+	//					DCMotor_stop();
+	//					osDelay(100);
+	//					DCMotor_moveRight(turn_speed);
+	//					osDelay(400);
+	//					DCMotor_moveForward(last_speed);
+	//					osDelay(500);
+	//					DCMotor_moveLeft(turn_speed);
+	//					osDelay(400);
+	//					DCMotor_moveForward(last_speed);*/
+	//					DCMotor_moveLeft(turn_speed);
+	//					osDelay(10);
+	//					uint32_t tick = 0;
+	//					while(1)
+	//					{
+	//						HCSR04_Trigger(HCSR04_SENSOR1);
+	//						osDelay(50);
+	//						double d = HCSR04_Read(HCSR04_SENSOR1);
+	//						tick++;
+	//						if(d >= Distance_Left)
+	//							break;
+	//					}
+	//					DCMotor_stop();
+	//					SERVO_MoveTo(SERVO_MOTOR1, SERVO_ANGLE_RIGHT);
+	//					osDelay(100);
+	//					DCMotor_moveForward(last_speed);
+	//					osDelay(10);
+	//					while(1)
+	//					{
+	//						HCSR04_Trigger(HCSR04_SENSOR1);
+	//						osDelay(50);
+	//						double d = HCSR04_Read(HCSR04_SENSOR1);
+	//						if(d >= SELF_DRIVING_CRITICAL_RANGE)
+	//							break;
+	//					}
+	//					DCMotor_stop();
+	//					SERVO_MoveTo(SERVO_MOTOR1, SERVO_ANGLE_CENTER);
+	//					osDelay(100);
+	//
+	//					DCMotor_moveRight(turn_speed);   // SHOULD BE TURN RIGHT :: Last State : Left
+	//					osDelay(10);
+	//					while(--tick)
+	//					{
+	//						osDelay(50);
+	//					}
+	//					DCMotor_stop();
+	//					osDelay(100);
+	//					DCMotor_moveForward(last_speed);
+	//					osDelay(10);
+	//				}
+	//				else
+	//				{
+	//					/*DCMotor_moveRight(turn_speed);
+	//					osDelay(500);
+	//					DCMotor_moveForward(last_speed);
+	//					osDelay(600);
+	//					DCMotor_stop();
+	//					osDelay(100);
+	//					DCMotor_moveLeft(turn_speed);
+	//					osDelay(500);
+	//					DCMotor_moveForward(last_speed);
+	//					osDelay(600);
+	//					DCMotor_stop();
+	//					osDelay(100);
+	//					DCMotor_moveLeft(turn_speed);
+	//					osDelay(400);
+	//					DCMotor_moveForward(last_speed);
+	//					osDelay(500);
+	//					DCMotor_moveRight(turn_speed);
+	//					osDelay(400);
+	//					DCMotor_moveForward(last_speed);*/
+	//					DCMotor_moveRight(turn_speed);
+	//					osDelay(10);
+	//					uint32_t tick = 0;
+	//					while(1)
+	//					{
+	//						HCSR04_Trigger(HCSR04_SENSOR1);
+	//						osDelay(50);
+	//						double d = HCSR04_Read(HCSR04_SENSOR1);
+	//						tick++;
+	//						if(d >= Distance_Right)
+	//							break;
+	//					}
+	//					DCMotor_stop();
+	//					SERVO_MoveTo(SERVO_MOTOR1, SERVO_ANGLE_LEFT);
+	//					osDelay(100);
+	//					DCMotor_moveForward(last_speed);
+	//					osDelay(10);
+	//					while(1)
+	//					{
+	//						HCSR04_Trigger(HCSR04_SENSOR1);
+	//						osDelay(50);
+	//						double d = HCSR04_Read(HCSR04_SENSOR1);
+	//						if(d >= SELF_DRIVING_CRITICAL_RANGE)
+	//							break;
+	//					}
+	//					DCMotor_stop();
+	//					SERVO_MoveTo(SERVO_MOTOR1, SERVO_ANGLE_CENTER);
+	//					osDelay(100);
+	//
+	//					DCMotor_moveLeft(turn_speed);    // Should be Left  :: Last State : Right
+	//					osDelay(10);
+	//					while(--tick)
+	//					{
+	//						osDelay(50);
+	//					}
+	//					DCMotor_stop();
+	//					osDelay(100);
+	//					DCMotor_moveForward(last_speed);
+	//					osDelay(10);
+	//				}
+	//
+	//			}
+	//
+	//			else
+	//			{
+	//				DCMotor_moveForward(Car_Current_Speed);  //Just keeping forward if there is no obstacles in front of the car
+	//			}
+	//		}
+	//		osDelay(30);
+	//	}
+	/* USER CODE END StartSelfDrivingTask */
 }
 
 /* USER CODE BEGIN Header_LaneDepartureWarning */
@@ -849,10 +981,11 @@ void StartSelfDrivingTask(void *argument)
 /* USER CODE END Header_LaneDepartureWarning */
 void LaneDepartureWarning(void *argument)
 {
-  /* USER CODE BEGIN LaneDepartureWarning */
+	/* USER CODE BEGIN LaneDepartureWarning */
 	/* Infinite loop */
 	for(;;)
 	{
+		osDelay(1000);continue; // temp disable
 		if(LeftIrCounter>2)
 		{
 			LeftIrCounter=0;
@@ -866,7 +999,7 @@ void LaneDepartureWarning(void *argument)
 			// Activate left lane warning
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,1);
 			Buffer_GUI[LANE_DIG_1_IDx] = 1;
-			osDelay(500);
+			osDelay(150);
 		}
 		else if(LeftIrCounter == 2 )
 		{
@@ -875,14 +1008,14 @@ void LaneDepartureWarning(void *argument)
 			RightIrCounter = 0;
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,0);
 			Buffer_GUI[LANE_DIG_1_IDx] = 0;
-			osDelay(500);
+			osDelay(150);
 		}
 		else if(RightIrCounter == 1 && LeftIrCounter == 0)
 		{
 			// Activate right lane warning
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,1);
 			Buffer_GUI[LANE_DIG_2_IDx] = 1;
-			osDelay(500);
+			osDelay(150);
 		}
 		else if(RightIrCounter == 2)
 		{
@@ -891,8 +1024,9 @@ void LaneDepartureWarning(void *argument)
 			RightIrCounter = 0;
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,0);
 			Buffer_GUI[LANE_DIG_2_IDx] = 0;
-			osDelay(500);
+			osDelay(150);
 		}
+
 		else if((RightIrCounter == 1 && LeftIrCounter == 1))
 		{
 			LeftIrCounter = 0;
@@ -901,15 +1035,15 @@ void LaneDepartureWarning(void *argument)
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,0);
 			Buffer_GUI[LANE_DIG_1_IDx] = 0;
 			Buffer_GUI[LANE_DIG_2_IDx] = 0;
-			osDelay(500);
+			osDelay(150);
 		}
 		else
 		{
 			// No lane departure warning
-			osDelay(500);
+			osDelay(50);
 		}
 	}
-  /* USER CODE END LaneDepartureWarning */
+	/* USER CODE END LaneDepartureWarning */
 }
 
 /* USER CODE BEGIN Header_RainDetection */
@@ -921,7 +1055,7 @@ void LaneDepartureWarning(void *argument)
 /* USER CODE END Header_RainDetection */
 void RainDetection(void *argument)
 {
-  /* USER CODE BEGIN RainDetection */
+	/* USER CODE BEGIN RainDetection */
 	/* Infinite loop */
 	/* Infinite loop */
 	uint8_t RainDetectFlag = 0;
@@ -953,7 +1087,7 @@ void RainDetection(void *argument)
 		}
 		osDelay(500);
 	}
-  /* USER CODE END RainDetection */
+	/* USER CODE END RainDetection */
 }
 
 /* USER CODE BEGIN Header_LaneKeepAssist */
@@ -965,80 +1099,97 @@ void RainDetection(void *argument)
 /* USER CODE END Header_LaneKeepAssist */
 void LaneKeepAssist(void *argument)
 {
-  /* USER CODE BEGIN LaneKeepAssist */
-	uint8_t laneKeepFlag=0;
+	/* USER CODE BEGIN LaneKeepAssist */
+	static uint8_t laneKeepFlag=0;
+
 	/* Infinite loop */
 	for(;;)
 	{
-		osDelay(1000);continue; // temp disable
-		if(LeftIrCounter==1)
+		//		osDelay(1000);continue; // temp disable
+		if(LeftIrCounter>0)
 		{
+			for(uint8_t i=0;i<5;i++)
+			{
+				DCMotor_moveRight(70);
+				osDelay(100);
+				DCMotor_moveForward(Car_Current_Speed);
+				osDelay(100);
+				DCMotor_stop();
+				osDelay(1000);
+
+			}
 			laneKeepFlag=1;
-			DCMotor_moveRight(70);
-			osDelay(200);
+			LeftIrCounter=0;
 
 		}
-		if(laneKeepFlag==1 && LeftIrCounter==0)
+
+		if(laneKeepFlag==1 && LeftIrCounter==0 && RightIrCounter==0 )
 		{
 			laneKeepFlag=0;
-			DCMotor_moveForward(Car_Current_Speed);
-			osDelay(200);
-		}
-		if(RightIrCounter==1)
-		{
-			laneKeepFlag=1;
 			DCMotor_moveLeft(70);
-			osDelay(200);
-
-		}
-		if(laneKeepFlag==1 && RightIrCounter==0)
-		{
-			laneKeepFlag=0;
+			osDelay(100);
 			DCMotor_moveForward(Car_Current_Speed);
-			osDelay(200);
+			osDelay(100);
 		}
+//		if(RightIrCounter==1)
+//		{
+//			laneKeepFlag=1;
+//			DCMotor_moveRight(70);
+//			osDelay(100);
+//			DCMotor_moveForward(Car_Current_Speed);
+//			osDelay(100);
+//
+//		}
+		//		if(laneKeepFlag==1 && RightIrCounter==0 && LeftIrCounter==0)
+		//		{
+		//			laneKeepFlag=0;
+		//			DCMotor_moveLeft(70);
+		//			osDelay(100);
+		//			DCMotor_moveForward(70);
+		//			osDelay(100);
+		//		}
 		osDelay(100);
 	}
-  /* USER CODE END LaneKeepAssist */
+	/* USER CODE END LaneKeepAssist */
 }
 
 /* USER CODE BEGIN Header_StartBlindspot */
 /**
-* @brief Function implementing the Blindspot thread.
-* @param argument: Not used
-* @retval None
-*/
+ * @brief Function implementing the Blindspot thread.
+ * @param argument: Not used
+ * @retval None
+ */
 /* USER CODE END Header_StartBlindspot */
 void StartBlindspot(void *argument)
 {
-  /* USER CODE BEGIN StartBlindspot */
-  /* Infinite loop */
-  for(;;)
-  {
-	static uint8_t TRIG_Ticks = 0;
-	TRIG_Ticks++;
-	if(TRIG_Ticks >= 1)
+	/* USER CODE BEGIN StartBlindspot */
+	/* Infinite loop */
+	for(;;)
 	{
-		HCSR04_Trigger(HCSR04_SENSOR2);
-		TRIG_Ticks = 0;
-		osDelay(50);
+		static uint8_t TRIG_Ticks = 0;
+		TRIG_Ticks++;
+		if(TRIG_Ticks >= 1)
+		{
+			HCSR04_Trigger(HCSR04_SENSOR2);
+			TRIG_Ticks = 0;
+			osDelay(50);
+		}
+		uint8_t blind_check = blindspot_isObjectDetected();
+		if(blind_check == 1)
+		{
+			// Toggle warning LED
+			HAL_GPIO_WritePin(BLIND_LED_GPIO_Port, BLIND_LED_Pin, 1);
+			Buffer_GUI[B_SPOT_DIG1_IDx] = Buffer_GUI[B_SPOT_DIG2_IDx] = 1;
+			osDelay(1000);
+		}
+		else
+		{
+			HAL_GPIO_WritePin(BLIND_LED_GPIO_Port, BLIND_LED_Pin, 0);
+			Buffer_GUI[B_SPOT_DIG1_IDx] = Buffer_GUI[B_SPOT_DIG2_IDx] = 0;
+			osDelay(100);
+		}
 	}
-	uint8_t blind_check = blindspot_isObjectDetected();
-	if(blind_check == 1)
-	{
-		// Toggle warning LED
-		HAL_GPIO_WritePin(BLIND_LED_GPIO_Port, BLIND_LED_Pin, 1);
-		Buffer_GUI[B_SPOT_DIG1_IDx] = Buffer_GUI[B_SPOT_DIG2_IDx] = 1;
-		osDelay(1000);
-	}
-	else
-	{
-		HAL_GPIO_WritePin(BLIND_LED_GPIO_Port, BLIND_LED_Pin, 0);
-		Buffer_GUI[B_SPOT_DIG1_IDx] = Buffer_GUI[B_SPOT_DIG2_IDx] = 0;
-		osDelay(100);
-	}
-  }
-  /* USER CODE END StartBlindspot */
+	/* USER CODE END StartBlindspot */
 }
 
 /* Private application code --------------------------------------------------*/
@@ -1047,6 +1198,32 @@ void SelfDrivingCheck_side(void)
 {
 
 	DCMotor_stop();
+	osDelay(1000); /* 500 */
+	DCMotor_moveBackward(Car_Current_Speed);
+	osDelay(500); /* 500 */
+	DCMotor_stop();
+	osDelay(1000); /* 15 */
+	/* Servo turn to Right (120) then read distance*/
+	SERVO_MoveTo(SERVO_MOTOR1,15);
+	osDelay(15);
+	HCSR04_Trigger(HCSR04_SENSOR1);
+	osDelay(500);
+	Distance_Right = HCSR04_Read(HCSR04_SENSOR1);
+
+	SERVO_MoveTo(SERVO_MOTOR1,55);
+	osDelay(300);
+
+	/* Servo turn to Left (60) then read distance*/
+	SERVO_MoveTo(SERVO_MOTOR1,95);
+	osDelay(15);
+	HCSR04_Trigger(HCSR04_SENSOR1);
+	osDelay(500);
+	Distance_Left = HCSR04_Read(HCSR04_SENSOR1);
+	/* Servo turn to origin (115) then read distance*/
+	SERVO_MoveTo(SERVO_MOTOR1,55);
+
+
+	/*	DCMotor_stop();
 	DCMotor_moveBackward(Car_Current_Speed);
 	while(1)
 	{
@@ -1059,20 +1236,21 @@ void SelfDrivingCheck_side(void)
 	}
 	DCMotor_stop();
 	osDelay(10);
-	/* Servo turn to Left (150) then read distance*/
+	 Servo turn to Left (150) then read distance
 	SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_LEFT);
 	HCSR04_Trigger(HCSR04_SENSOR1);
 	osDelay(800);
 	Distance_Left = HCSR04_Read(HCSR04_SENSOR1);
 
-	/* Servo turn to Right (50) then read distance*/
+	 Servo turn to Right (50) then read distance
 	SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_RIGHT);
 	HCSR04_Trigger(HCSR04_SENSOR1);
 	osDelay(800);
 	Distance_Right = HCSR04_Read(HCSR04_SENSOR1);
-	/* Servo turn to origin (100) then read distance*/
+	 Servo turn to origin (100) then read distance
 	SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_CENTER);
-	osDelay(200);
+	osDelay(200);*/
+
 }
 /* USER CODE END Application */
 
