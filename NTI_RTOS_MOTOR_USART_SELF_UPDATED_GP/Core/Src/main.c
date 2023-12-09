@@ -65,7 +65,8 @@ uint8_t Car_LaneAssist_Enable = 0				  ;
 uint8_t Car_BlindSpot_Enable  = 0				  ;
 uint8_t GUI_Send_Speed        = CAR_DEFAULT_SPEED ;
 
-uint8_t Buffer_GUI[GUI_ARRAY_SIZE] = {"1123014010101"};
+uint8_t Buffer_GUI[GUI_ARRAY_SIZE] = {"0000000000000"};
+//uint8_t Buffer_GUI[GUI_ARRAY_SIZE] = {"1123014010101"};
 //uint8_t Buffer_GUI[GUI_ARRAY_SIZE]   = {"1112000010101"};
 //uint8_t Buffer_GUI[GUI_ARRAY_SIZE] = {"0109521701010"};
 /* USER CODE END PV */

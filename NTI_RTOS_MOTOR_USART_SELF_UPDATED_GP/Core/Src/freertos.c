@@ -622,7 +622,7 @@ void StartNormalMode(void *argument)
 	/* Infinite loop */
 	for(;;)
 	{
-		if((Car_Current_Mode == NORMAL_MODE) && (LeftIrCounter == 0) && (RightIrCounter == 0))
+		if((Car_Current_Mode == NORMAL_MODE) && ( (Car_LaneAssist_Enable==0) || ((LeftIrCounter == 0) && (RightIrCounter == 0))))
 		{
 			if(Car_Current_Status == CAR_RUNNING)
 			{
@@ -1078,7 +1078,7 @@ void LaneDepartureWarning(void *argument)
 	/* Infinite loop */
 	for(;;)
 	{
-		osDelay(1000);continue; // temp disable
+		//osDelay(1000);continue; // temp disable
 		if(LeftIrWarnCoutner>2)
 		{
 			LeftIrWarnCoutner=0;
@@ -1091,8 +1091,8 @@ void LaneDepartureWarning(void *argument)
 		{
 			// Activate left lane warning
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,1);
-			Buffer_GUI[LANE_DIG_1_IDx] = 1;
-			Buffer_GUI[LANE_DIG_2_IDx] = 0;
+			Buffer_GUI[LANE_DIG_1_IDx] = CHARACTER_ONE;
+			Buffer_GUI[LANE_DIG_2_IDx] = CHARACTER_ZERO;
 			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 			osDelay(150);
 		}
@@ -1102,7 +1102,7 @@ void LaneDepartureWarning(void *argument)
 			LeftIrWarnCoutner = 0;
 			RightIrWarnCoutner = 0;
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,0);
-			Buffer_GUI[LANE_DIG_1_IDx] = 0;
+			Buffer_GUI[LANE_DIG_1_IDx] = CHARACTER_ZERO;
 			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 
 			osDelay(150);
@@ -1111,8 +1111,8 @@ void LaneDepartureWarning(void *argument)
 		{
 			// Activate right lane warning
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,1);
-			Buffer_GUI[LANE_DIG_1_IDx] = 0;
-			Buffer_GUI[LANE_DIG_2_IDx] = 1;
+			Buffer_GUI[LANE_DIG_1_IDx] = CHARACTER_ZERO;
+			Buffer_GUI[LANE_DIG_2_IDx] = CHARACTER_ONE;
 			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 
 			osDelay(150);
@@ -1123,7 +1123,7 @@ void LaneDepartureWarning(void *argument)
 			LeftIrWarnCoutner = 0;
 			RightIrWarnCoutner = 0;
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,0);
-			Buffer_GUI[LANE_DIG_2_IDx] = 0;
+			Buffer_GUI[LANE_DIG_2_IDx] = CHARACTER_ZERO;
 			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 
 			osDelay(150);
@@ -1135,8 +1135,8 @@ void LaneDepartureWarning(void *argument)
 			RightIrWarnCoutner = 0;
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,0);
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,0);
-			Buffer_GUI[LANE_DIG_1_IDx] = 0;
-			Buffer_GUI[LANE_DIG_2_IDx] = 0;
+			Buffer_GUI[LANE_DIG_1_IDx] = CHARACTER_ZERO;
+			Buffer_GUI[LANE_DIG_2_IDx] = CHARACTER_ZERO;
 			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 
 			osDelay(150);
@@ -1169,7 +1169,7 @@ void RainDetection(void *argument)
 		if(HAL_GPIO_ReadPin(RAIN_SENSOR_GPIO_Port, RAIN_SENSOR_Pin)==1)
 		{
 			//HAL_GPIO_WritePin(RAIN_LED_GPIO_Port, RAIN_LED_Pin, 1);
-			Buffer_GUI[RAIN_DIG_1_IDx] = 1;
+			Buffer_GUI[RAIN_DIG_1_IDx] = CHARACTER_ONE;
 			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 
 			if(RainDetectFlag==0)
@@ -1189,7 +1189,7 @@ void RainDetection(void *argument)
 		else
 		{
 			//HAL_GPIO_WritePin(RAIN_LED_GPIO_Port, RAIN_LED_Pin, 0);
-			Buffer_GUI[RAIN_DIG_1_IDx] = 0;
+			Buffer_GUI[RAIN_DIG_1_IDx] = CHARACTER_ZERO;
 			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 
 		}
@@ -1304,8 +1304,8 @@ void StartBlindspot(void *argument)
 			// Toggle warning LED
 			HAL_GPIO_WritePin(BLIND_LED_GPIO_Port, BLIND_LED_Pin, 1);
 
-			Buffer_GUI[B_SPOT_DIG1_IDx] = 0;
-			Buffer_GUI[B_SPOT_DIG2_IDx] = 1;
+			Buffer_GUI[B_SPOT_DIG1_IDx] = CHARACTER_ZERO;
+			Buffer_GUI[B_SPOT_DIG2_IDx] = CHARACTER_ONE;
 			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 
 			osDelay(1000);
@@ -1313,7 +1313,7 @@ void StartBlindspot(void *argument)
 		else
 		{
 			HAL_GPIO_WritePin(BLIND_LED_GPIO_Port, BLIND_LED_Pin, 0);
-			Buffer_GUI[B_SPOT_DIG1_IDx] = Buffer_GUI[B_SPOT_DIG2_IDx] = 0;
+			Buffer_GUI[B_SPOT_DIG1_IDx] = Buffer_GUI[B_SPOT_DIG2_IDx] = CHARACTER_ZERO;
 			osDelay(100);
 		}
 	}
