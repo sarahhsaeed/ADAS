@@ -60,15 +60,12 @@ uint8_t Car_Current_Mode      = CAR_DEFAULT_MODE  ;
 uint8_t Car_Current_Direction = CAR_STOP          ;
 uint8_t Car_Current_Status    = CAR_RUNNING       ;
 uint8_t Car_Current_Speed     = CAR_DEFAULT_SPEED ;
-uint8_t GUI_TRANSMIT_INSTANT  = 0                 ;
-uint8_t Car_LaneAssist_Enable = 0				  ;
-uint8_t Car_BlindSpot_Enable  = 0				  ;
+uint8_t GUI_TRANSMIT_INSTANT  = GUI_NO_TRANSMIT   ;
+uint8_t Car_LaneAssist_Enable = MODE_DISABLE	  ;
+uint8_t Car_BlindSpot_Enable  = MODE_DISABLE	  ;
 uint8_t GUI_Send_Speed        = CAR_DEFAULT_SPEED ;
 
 uint8_t Buffer_GUI[GUI_ARRAY_SIZE] = {"0000000000000"};
-//uint8_t Buffer_GUI[GUI_ARRAY_SIZE] = {"1123014010101"};
-//uint8_t Buffer_GUI[GUI_ARRAY_SIZE]   = {"1112000010101"};
-//uint8_t Buffer_GUI[GUI_ARRAY_SIZE] = {"0109521701010"};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -117,13 +114,16 @@ int main(void)
 	MX_TIM11_Init();
 	MX_TIM3_Init();
 	/* USER CODE BEGIN 2 */
+	/* Initialize two Ultrasonic sensors */
 	HCSR04_Init(HCSR04_SENSOR1, &htim2);
 	HCSR04_Init(HCSR04_SENSOR2, &htim2);
+	/* Initialize two Servo motors */
 	SERVO_Init(SERVO_MOTOR1);
 	SERVO_Init(SERVO_MOTOR2);
-
+	/* Start PWM on Motor channels */
 	HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
+	/* Start PWM on Servo channel */
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 
 
@@ -201,38 +201,44 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
+	/* Ultrasonic Input Capture Unit ISR handler*/
 	HCSR04_TMR_IC_ISR(htim);
 }
 
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	//	HAL_UART_Transmit(&huart2, Buffer_GUI, 14, 20);
 	Buffer_ASCII_TO_INT = atoi((char*)Buffer);
+	/* Set Vehicle mode (Normal, Adaptive Cruise Control or Self Driving Mode) */
 	if((Buffer_ASCII_TO_INT == NORMAL_MODE)||(Buffer_ASCII_TO_INT == ACC_MODE) || (Buffer_ASCII_TO_INT == SELF_DRIVING_MODE))
 	{
 		Car_Current_Mode = Buffer_ASCII_TO_INT;
 		Car_Current_Status = CAR_RUNNING ;
 
 	}
+	/* Set Vehicle direction (Forward, Backward, Leftwards or Rightwards) */
 	else if((Buffer_ASCII_TO_INT == MOVE_FORWARD)||(Buffer_ASCII_TO_INT == MOVE_BACKWORD)||(Buffer_ASCII_TO_INT == MOVE_RIGHT)||(Buffer_ASCII_TO_INT == MOVE_LEFT))
 	{
 		Car_Current_Direction = Buffer_ASCII_TO_INT;
 	}
+	/* Set Vehicle mode (stop mode) */
 	else if (Buffer_ASCII_TO_INT == STOP_MOTOR)
 	{
 		Car_Current_Speed  = CAR_STOP ;
 		GUI_Send_Speed     = CAR_STOP ;
 		Car_Current_Status = CAR_STOP ;
 	}
+	/* Set Lane Assist mode */
 	else if (Buffer_ASCII_TO_INT == LANEASSIST_ON || Buffer_ASCII_TO_INT == LANEASSIST_OFF)
 	{
 		Car_LaneAssist_Enable = (Buffer_ASCII_TO_INT == LANEASSIST_ON);
 	}
+	/* Set Blindspot mode */
 	else if (Buffer_ASCII_TO_INT == BLINDSPOT_ON || Buffer_ASCII_TO_INT == BLINDSPOT_OFF)
 	{
 		Car_BlindSpot_Enable = (Buffer_ASCII_TO_INT == BLINDSPOT_ON);
 	}
+	/* Set Vehicle speed */
 	else
 	{
 		if(Car_Current_Speed != (Buffer_ASCII_TO_INT - CAR_SPEED_OFFSET))
@@ -244,7 +250,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		Car_Current_Status = CAR_RUNNING ;
 
 	}
-	GUI_TRANSMIT_INSTANT = 1 ;
+	GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 }
 /* EXTI interrupt callback */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)

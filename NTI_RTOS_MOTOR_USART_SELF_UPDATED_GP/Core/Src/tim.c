@@ -446,42 +446,19 @@ void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* tim_pwmHandle)
 /* USER CODE BEGIN 1 */
 void Motor1_SetSpeed(double speed)
 {
-	/*
-	  TIM_OC_InitTypeDef sConfigOC = {0};
-	sConfigOC.OCMode = TIM_OCMODE_PWM1;
-	sConfigOC.Pulse = (speed/100.0) * (20000-1);
-	  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-	  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-	  if (HAL_TIM_PWM_ConfigChannel(&htim5, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
-	  HAL_TIM_PWM_Stop(&htim5, TIM_CHANNEL_1);
-	  HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
-	  */
+	/* Set PWM compare value to match required duty cycle */
 	__HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, ((speed/100.0) * (20000-1)));
 }
 
 void Motor2_SetSpeed(double speed)
 {
-	/*
-	  TIM_OC_InitTypeDef sConfigOC = {0};
-	sConfigOC.OCMode = TIM_OCMODE_PWM1;
-	  sConfigOC.Pulse = (speed/100.0) * (20000-1);
-	  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-	  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-	  if (HAL_TIM_PWM_ConfigChannel(&htim5, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
-	  HAL_TIM_PWM_Stop(&htim5, TIM_CHANNEL_2);
-	  HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2);
-	  */
+	/* Set PWM compare value to match required duty cycle */
 	  __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, ((speed/100.0) * (20000-1)));
 }
 
 void Motors_GetSpeeds(double *m1_speed, double *m2_speed)
 {
+	/* Get duty cycle based on PWM compare value */
 	*m1_speed = TIM5->CCR1/(20000-1)*100.0;
 	*m2_speed = TIM5->CCR2/(20000-1)*100.0;
 }

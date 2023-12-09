@@ -8,5 +8,5 @@ tim.c:311:6:HAL_TIM_MspPostInit	4
 tim.c:381:6:HAL_TIM_Base_MspDeInit	4
 tim.c:430:6:HAL_TIM_PWM_MspDeInit	2
 tim.c:447:6:Motor1_SetSpeed	1
-tim.c:465:6:Motor2_SetSpeed	1
-tim.c:483:6:Motors_GetSpeeds	1
+tim.c:453:6:Motor2_SetSpeed	1
+tim.c:459:6:Motors_GetSpeeds	1

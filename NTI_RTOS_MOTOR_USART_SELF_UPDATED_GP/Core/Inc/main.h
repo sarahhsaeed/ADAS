@@ -61,6 +61,8 @@ extern "C" {
 #define B_SPOT_DIG1_IDx               11
 #define B_SPOT_DIG2_IDx               12
 
+#define MODE_DISABLE	(0)
+#define MODE_ENABLE		(1)
 
 #define CHARACTER_ZERO                '0'
 #define CHARACTER_ONE                 '1'
@@ -73,6 +75,26 @@ extern "C" {
 #define SELF_DRIVING_CRITICAL_RANGE   30
 #define SERVO_MOTOR1    0
 #define SERVO_MOTOR2    1
+
+// ACC
+#define ACC_DISTANCE_1	80
+#define ACC_DISTANCE_2	65
+#define ACC_DISTANCE_3	50
+#define ACC_DISTANCE_4	35
+#define ACC_DISTANCE_5	20
+#define ACC_SPEED_1	100
+#define ACC_SPEED_2	80
+#define ACC_SPEED_3	60
+#define ACC_SPEED_4	40
+#define ACC_SPEED_5	20
+// ---
+
+// LDW
+#define LDW_NO_DETECTION		0
+#define LDW_FIRST_DETECTION		1
+#define LDW_SECOND_DETECTION	2
+#define LDW_THIRD_DETECTION		2
+// ---
 
 
 typedef enum

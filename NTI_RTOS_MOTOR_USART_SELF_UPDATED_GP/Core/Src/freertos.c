@@ -256,6 +256,7 @@ void StartmotorTask(void *argument)
 	{
 		motorControl_t motortask;
 		uint8_t motortask_prio;
+		/* Fetch motor command request from FreeRTOS queue */
 		if(osMessageQueueGet(motorQueueHandle, &motortask, &motortask_prio, 10) == osOK)
 		{
 			/*if(motortask.motors[0].speed > 0 && motortask.motors[0].speed < 40)
@@ -264,11 +265,13 @@ void StartmotorTask(void *argument)
 			  Motor2_SetSpeed(70);
 			  HAL_Delay(5);
 		  }*/
+			/* Get previous speeds */
 			double prev_speeds[2];
 			Motors_GetSpeeds(&prev_speeds[0], &prev_speeds[1]);
 			uint8_t flag = 0;
 			for(uint8_t i = 0; i < 2; i++)
 			{
+				/* Raise flag to detect vehicle stop or speed reduction in order to trigger the rear red LEDs */
 				if(motortask.motors[i].control == MOTOR_OFF)
 				{
 					flag = 1;
@@ -283,14 +286,15 @@ void StartmotorTask(void *argument)
 					}
 				}
 			}
-			if(flag)
+			if(flag) /* If the flag was raised, flag the red LEDs to get turned on by its own task */
 			{
 				Red_Light_Flag = 1;
 			}
-			else
+			else /* Otherwise, reset the flag */
 			{
 				Red_Light_Flag = 0;
 			}
+			/* If the vehicle is turning right or left, raise the turning indicator LED flag*/
 			// LEFT
 			if(motortask.motors[0].control == MOTOR_FWD && motortask.motors[1].control == MOTOR_REV)
 			{
@@ -309,8 +313,10 @@ void StartmotorTask(void *argument)
 				Left_Light_Flag = 0;
 				Right_Light_Flag = 0;
 			}
+			/* Handle the DC Motor request by setting PWM duty cycle. */
 			DCMotor_handleRequest(&motortask);
 		}
+		/* Send the task to BLOCKING state for 10 ticks (10 ms) */
 		osDelay(10);
 	}
   /* USER CODE END StartmotorTask */
@@ -335,274 +341,50 @@ void StartACCTask(void *argument)
 		if(Car_Current_Mode == ACC_MODE)
 		{
 			Distance = HCSR04_Read(HCSR04_SENSOR1);
-			/*if(Distance == prev_distances[0] && Distance == prev_distances[1])
-	  {
-		  Distance = 9999.0;
-	  }*/
 			TRIG_Ticks++;
 			if(TRIG_Ticks >= 5)
 			{
 				HCSR04_Trigger(HCSR04_SENSOR1);
 				TRIG_Ticks = 0;
-				// MOTOR TEST:
-				/*
-		  static uint8_t lmao = 0;
-		  osMessageQueuePut(motorQueueHandle, &lmao, 0, 1);
-		  lmao = (lmao+1) % 8;
-				 */
-#if 0
-				static uint8_t lmao = 0;
-				motorControl_t payload = {0};
-				switch(lmao)
-				{
-				case 0: // STOP ALL
-					for(uint8_t i = 0; i < 2; i++)
-					{
-						payload.motors[i].modify = 1;
-						payload.motors[i].speed = 0;
-						payload.motors[i].control = MOTOR_OFF;
-					}
-					osMessageQueuePut(motorQueueHandle, &payload, 0, 1);
-					break;
-				case 1: // MOVE FORWARD
-					for(uint8_t i = 0; i < 2; i++)
-					{
-						payload.motors[i].modify = 1;
-						payload.motors[i].speed = 100;
-						payload.motors[i].control = MOTOR_FWD;
-					}
-					osMessageQueuePut(motorQueueHandle, &payload, 0, 1);
-					break;
-				case 2: // MOVE BACKWARD
-					for(uint8_t i = 0; i < 2; i++)
-					{
-						payload.motors[i].modify = 1;
-						payload.motors[i].speed = 100;
-						payload.motors[i].control = MOTOR_REV;
-					}
-					osMessageQueuePut(motorQueueHandle, &payload, 0, 1);
-					break;
-				case 3: // 30%
-					for(uint8_t i = 0; i < 2; i++)
-					{
-						payload.motors[i].modify = 1;
-						payload.motors[i].speed = 30;
-						payload.motors[i].control = MOTOR_FWD;
-					}
-					osMessageQueuePut(motorQueueHandle, &payload, 0, 1);
-					break;
-				case 4: // 40%
-					for(uint8_t i = 0; i < 2; i++)
-					{
-						payload.motors[i].modify = 1;
-						payload.motors[i].speed = 40;
-						payload.motors[i].control = MOTOR_FWD;
-					}
-					osMessageQueuePut(motorQueueHandle, &payload, 0, 1);
-					break;
-				case 5: // 50%
-					for(uint8_t i = 0; i < 2; i++)
-					{
-						payload.motors[i].modify = 1;
-						payload.motors[i].speed = 50;
-						payload.motors[i].control = MOTOR_FWD;
-					}
-					osMessageQueuePut(motorQueueHandle, &payload, 0, 1);
-					break;
-				case 6: // 60%
-					for(uint8_t i = 0; i < 2; i++)
-					{
-						payload.motors[i].modify = 1;
-						payload.motors[i].speed = 60;
-						payload.motors[i].control = MOTOR_FWD;
-					}
-					osMessageQueuePut(motorQueueHandle, &payload, 0, 1);
-					break;
-				case 7: // 70%
-					for(uint8_t i = 0; i < 2; i++)
-					{
-						payload.motors[i].modify = 1;
-						payload.motors[i].speed = 70;
-						payload.motors[i].control = MOTOR_FWD;
-					}
-					osMessageQueuePut(motorQueueHandle, &payload, 0, 1);
-					break;
-				}
-				lmao = (lmao+1) % 8;
-#endif
 			}
-#if 1
 			// ACC START
-#define DISTANCE_1	80
-#define DISTANCE_2	65
-#define DISTANCE_3	50
-#define DISTANCE_4	35
-#define DISTANCE_5	20
-#define SPEED_1	100
-#define SPEED_2	80
-#define SPEED_3	60
-#define SPEED_4	40
-#define SPEED_5	20
-#if 0
-			static enum
-			{
-				CRUISE_CONTROL_FULL,
-				CRUISE_CONTROL_SLOWDOWN,
-				CRUISE_CONTROL_SPEEDUP,
-				CRUISE_CONTROL_STOP
-			} cruiseControl_state = CRUISE_CONTROL_FULL;
-			double motorSpeeds[2];
-			Motors_GetSpeeds(&motorSpeeds[0], &motorSpeeds[1]);
-			double delta_distance = Distance - prev_distance;
-			switch(cruiseControl_state)
-			{
-			case CRUISE_CONTROL_FULL:
-			{
-				if(Distance >= DISTANCE_1 && ((motorSpeeds[0] - motorSpeeds[1]) != 0 || motorSpeeds[0] < SPEED_1))
-				{
-					motorControl_t payload = {0};
-					for(uint8_t i = 0; i < 2; i++)
-					{
-						payload.motors[i].modify = 1;
-						payload.motors[i].speed = SPEED_1;
-						payload.motors[i].control = MOTOR_FWD;
-					}
-					osMessageQueuePut(motorQueueHandle, &payload, 0, 1);
-					break;
-				}
 
-				if(delta_distance < 0)
-				{
-					cruiseControl_state = CRUISE_CONTROL_SLOWDOWN;
-				}
-				else if(delta_distance > 0)
-				{
-					cruiseControl_state = CRUISE_CONTROL_SPEEDUP;
-				}
-				else break;
-				//break;
-			}
-			case CRUISE_CONTROL_SLOWDOWN:
+			if(Distance > ACC_DISTANCE_1)
 			{
-				if(delta_distance < 0)
-				{
-					if(delta_distance/-10 > 1)
-					{
-						// Apply speed loss based on distance loss
-						double distance_loss = delta_distance/Distance*-1;
-						double speed_loss = motorSpeeds[0] * distance_loss;
-						if(speed_loss < 10)
-						{
-							speed_loss = 0;
-							cruiseControl_state = CRUISE_CONTROL_STOP;
-						}
-						motorControl_t payload = {0};
-						for(uint8_t i = 0; i < 2; i++)
-						{
-							payload.motors[i].modify = 1;
-							payload.motors[i].speed = speed_loss;
-							payload.motors[i].control = MOTOR_FWD;
-						}
-						osMessageQueuePut(motorQueueHandle, &payload, 0, 1);
-						cruiseControl_state = CRUISE_CONTROL_SLOWDOWN;
-					}
-					else
-					{
-						cruiseControl_state = CRUISE_CONTROL_SLOWDOWN;
-					}
-				}
-				else if(delta_distance == 0)
-				{
-					cruiseControl_state = CRUISE_CONTROL_FULL;
-				}
-				else if(delta_distance > 0)
-				{
-					cruiseControl_state = CRUISE_CONTROL_SPEEDUP;
-				}
-
-				break;
+				DCMotor_moveForward(ACC_SPEED_1);
+				GUI_Send_Speed = ACC_SPEED_1;
 			}
-			case CRUISE_CONTROL_SPEEDUP:
+			else if(Distance < ACC_DISTANCE_1 && Distance > ACC_DISTANCE_2)
 			{
-				double distance_gain = delta_distance/Distance + 1;
-				double speed_gain = motorSpeeds[0] * distance_gain;
-				if(delta_distance == 0 && motorSpeeds[0] < SPEED_5)
-				{
-					speed_gain = SPEED_5;
-				}
-				if(delta_distance > 0)
-				{
-					if(delta_distance/10 > 1)
-					{
-						// Apply speed gain based on distance gain
-
-						if(speed_gain > SPEED_1)
-							speed_gain = SPEED_1;
-						motorControl_t payload = {0};
-						for(uint8_t i = 0; i < 2; i++)
-						{
-							payload.motors[i].modify = 1;
-							payload.motors[i].speed = motorSpeeds[i] * distance_gain;
-							payload.motors[i].control = MOTOR_FWD;
-						}
-						osMessageQueuePut(motorQueueHandle, &payload, 0, 1);
-						cruiseControl_state = CRUISE_CONTROL_SPEEDUP;
-					}
-					else
-					{
-						cruiseControl_state = CRUISE_CONTROL_SLOWDOWN;
-					}
-				}
-				break;
+				DCMotor_moveForward(ACC_SPEED_2);
+				GUI_Send_Speed = ACC_SPEED_2;
 			}
-			case CRUISE_CONTROL_STOP:
+			else if(Distance < ACC_DISTANCE_2 && Distance > ACC_DISTANCE_3)
 			{
-				motorControl_t payload = {0};
-				for(uint8_t i = 0; i < 2; i++)
-				{
-					payload.motors[i].modify = 1;
-					payload.motors[i].speed = 0;
-					payload.motors[i].control = MOTOR_FWD;
-				}
-				osMessageQueuePut(motorQueueHandle, &payload, 0, 1);
-				if(delta_distance > 0)
-					cruiseControl_state = CRUISE_CONTROL_SPEEDUP;
-				break;
+				DCMotor_moveForward(ACC_SPEED_3);
+				GUI_Send_Speed = ACC_SPEED_3;
 			}
-			}
-#endif
-#if 1
-			if(Distance == 9999.0) continue;
-			if(Distance > DISTANCE_1)
+			else if(Distance < ACC_DISTANCE_3 && Distance > ACC_DISTANCE_4)
 			{
-				DCMotor_moveForward(SPEED_1);
+				DCMotor_moveForward(ACC_SPEED_4);
+				GUI_Send_Speed = ACC_SPEED_4;
 			}
-			else if(Distance < DISTANCE_1 && Distance > DISTANCE_2)
+			else if(Distance < ACC_DISTANCE_4 && Distance > ACC_DISTANCE_5)
 			{
-				DCMotor_moveForward(SPEED_2);
+				DCMotor_moveForward(ACC_SPEED_5);
+				GUI_Send_Speed = ACC_SPEED_5;
 			}
-			else if(Distance < DISTANCE_2 && Distance > DISTANCE_3)
-			{
-				DCMotor_moveForward(SPEED_3);
-			}
-			else if(Distance < DISTANCE_3 && Distance > DISTANCE_4)
-			{
-				DCMotor_moveForward(SPEED_4);
-			}
-			else if(Distance < DISTANCE_4 && Distance > DISTANCE_5)
-			{
-				DCMotor_moveForward(SPEED_5);
-			}
-			else if(Distance < DISTANCE_5)
+			else if(Distance < ACC_DISTANCE_5)
 			{
 				DCMotor_stop();
+				GUI_Send_Speed = CAR_STOP;
 			}
-#endif
+			GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
+
 			prev_distance = Distance;
 			prev_distances[1] = prev_distances[0];
 			prev_distances[0] = Distance;
 			// ACC END
-#endif
 		}
 		osDelay(50);
 	}
@@ -637,13 +419,13 @@ void StartNormalMode(void *argument)
 					break;
 				case MOVE_RIGHT:
 					DCMotor_moveRight(Car_Current_Speed);
-					osDelay(100);         // TODO :: TEST
+					osDelay(100);
 					DCMotor_moveForward(Car_Current_Speed);
 					Car_Current_Direction = MOVE_FORWARD;
 					break;
 				case MOVE_LEFT:
 					DCMotor_moveLeft(Car_Current_Speed);
-					osDelay(100);        // TODO :: TEST
+					osDelay(100);
 					DCMotor_moveForward(Car_Current_Speed);
 					Car_Current_Direction = MOVE_FORWARD;
 					break;
@@ -694,21 +476,14 @@ void StartGUI_UpdateTask(void *argument)
 			break;
 		}
 
-//		Buffer_GUI[SPEED_DIG_1_IDx] = ((Car_Current_Speed  * 2) / 100) + CHARACTER_ZERO;
-//		Buffer_GUI[SPEED_DIG_2_IDx] = (((Car_Current_Speed * 2) / 10) % 10) + CHARACTER_ZERO;
-//		Buffer_GUI[SPEED_DIG_3_IDx] = ((Car_Current_Speed  * 2) % 10) + CHARACTER_ZERO;
-
 		Buffer_GUI[SPEED_DIG_1_IDx] = ((GUI_Send_Speed  * 2) / 100) + CHARACTER_ZERO;
 		Buffer_GUI[SPEED_DIG_2_IDx] = (((GUI_Send_Speed * 2) / 10) % 10) + CHARACTER_ZERO;
 		Buffer_GUI[SPEED_DIG_3_IDx] = ((GUI_Send_Speed  * 2) % 10) + CHARACTER_ZERO;
 
-		if(GUI_TRANSMIT_INSTANT == 1 )
+		if(GUI_TRANSMIT_INSTANT == GUI_TRANSMIT )
 		{
 			HAL_UART_Transmit(&huart2, Buffer_GUI, 14, 20);
-			/********* To Protect Global Variable "GUI_TRANSMIT_INSTANT" *********/
-			//		HAL_NVIC_DisableIRQ(USART2_IRQn);
-			GUI_TRANSMIT_INSTANT = 0 ;   //TODO:: Disable/Enable EXTI - IR
-			//		HAL_NVIC_EnableIRQ(USART2_IRQn);
+			GUI_TRANSMIT_INSTANT = GUI_NO_TRANSMIT ;
 		}
 		osDelay(100);
 	}
@@ -729,7 +504,7 @@ void StartSelfDrivingTask(void *argument)
 	static uint8_t TRIG_Ticks = 0;
 	//static uint8_t mode_first_called = 0;
 	//	Car_Current_Speed = 55;
-	SERVO_MoveTo(SERVO_MOTOR1,100);
+	SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_CENTER);
 	/* Infinite loop */
 	for(;;)
 	{
@@ -757,21 +532,21 @@ void StartSelfDrivingTask(void *argument)
 				GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
 				osDelay(500); /* 15 */
 				/* Servo turn to Right (120) then read distance*/
-				SERVO_MoveTo(SERVO_MOTOR1,45);
+				SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_RIGHT);
 				osDelay(500);
 				HCSR04_Trigger(HCSR04_SENSOR1);
 				osDelay(500);
 				Distance_Right = HCSR04_Read(HCSR04_SENSOR1);
-				SERVO_MoveTo(SERVO_MOTOR1,100);
+				SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_CENTER);
 				osDelay(500);
 				/* Servo turn to Left (60) then read distance*/
-				SERVO_MoveTo(SERVO_MOTOR1,155);
+				SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_LEFT);
 				osDelay(500);
 				HCSR04_Trigger(HCSR04_SENSOR1);
 				osDelay(500);
 				Distance_Left = HCSR04_Read(HCSR04_SENSOR1);
 				/* Servo turn to origin (115) then read distance*/
-				SERVO_MoveTo(SERVO_MOTOR1,100);
+				SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_CENTER);
 
 
 				if(Distance_Left >= Distance_Right)
@@ -1078,16 +853,17 @@ void LaneDepartureWarning(void *argument)
 	/* Infinite loop */
 	for(;;)
 	{
-		//osDelay(1000);continue; // temp disable
-		if(LeftIrWarnCoutner>2)
+		if(LeftIrWarnCoutner>LDW_THIRD_DETECTION)
 		{
-			LeftIrWarnCoutner=0;
+			LeftIrWarnCoutner=LDW_NO_DETECTION;
 		}
-		if(RightIrWarnCoutner>2)
+		if(RightIrWarnCoutner>LDW_THIRD_DETECTION)
 		{
-			RightIrWarnCoutner=0;
+			RightIrWarnCoutner=LDW_NO_DETECTION;
 		}
-		if(LeftIrWarnCoutner == 1 && RightIrCounter == 0)
+
+
+		if(LeftIrWarnCoutner == LDW_FIRST_DETECTION && RightIrCounter == LDW_NO_DETECTION)
 		{
 			// Activate left lane warning
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,1);
@@ -1096,18 +872,18 @@ void LaneDepartureWarning(void *argument)
 			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 			osDelay(150);
 		}
-		else if(LeftIrWarnCoutner == 2 )
+		else if(LeftIrWarnCoutner == LDW_THIRD_DETECTION )
 		{
 			// Deactivate left lane warning
-			LeftIrWarnCoutner = 0;
-			RightIrWarnCoutner = 0;
+			LeftIrWarnCoutner = LDW_NO_DETECTION;
+			RightIrWarnCoutner = LDW_NO_DETECTION;
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,0);
 			Buffer_GUI[LANE_DIG_1_IDx] = CHARACTER_ZERO;
 			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 
 			osDelay(150);
 		}
-		else if(RightIrWarnCoutner == 1 && LeftIrWarnCoutner == 0)
+		else if(RightIrWarnCoutner == LDW_FIRST_DETECTION && LeftIrWarnCoutner == LDW_NO_DETECTION)
 		{
 			// Activate right lane warning
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,1);
@@ -1117,11 +893,11 @@ void LaneDepartureWarning(void *argument)
 
 			osDelay(150);
 		}
-		else if(RightIrCounter == 2)
+		else if(RightIrCounter == LDW_THIRD_DETECTION)
 		{
 			// Deactivate right lane warning
-			LeftIrWarnCoutner = 0;
-			RightIrWarnCoutner = 0;
+			LeftIrWarnCoutner = LDW_NO_DETECTION;
+			RightIrWarnCoutner = LDW_NO_DETECTION;
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,0);
 			Buffer_GUI[LANE_DIG_2_IDx] = CHARACTER_ZERO;
 			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
@@ -1129,10 +905,10 @@ void LaneDepartureWarning(void *argument)
 			osDelay(150);
 		}
 
-		else if((RightIrWarnCoutner == 1 && LeftIrWarnCoutner == 1))
+		else if((RightIrWarnCoutner == LDW_FIRST_DETECTION && LeftIrWarnCoutner == LDW_FIRST_DETECTION))
 		{
-			LeftIrWarnCoutner = 0;
-			RightIrWarnCoutner = 0;
+			LeftIrWarnCoutner = LDW_NO_DETECTION;
+			RightIrWarnCoutner = LDW_NO_DETECTION;
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,0);
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,0);
 			Buffer_GUI[LANE_DIG_1_IDx] = CHARACTER_ZERO;
@@ -1168,19 +944,16 @@ void RainDetection(void *argument)
 	{
 		if(HAL_GPIO_ReadPin(RAIN_SENSOR_GPIO_Port, RAIN_SENSOR_Pin)==1)
 		{
-			//HAL_GPIO_WritePin(RAIN_LED_GPIO_Port, RAIN_LED_Pin, 1);
 			Buffer_GUI[RAIN_DIG_1_IDx] = CHARACTER_ONE;
 			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 
 			if(RainDetectFlag==0)
 			{
-				//__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_1, 100);
 				SERVO_MoveTo(SERVO_MOTOR2,SERVO_ANGLE_FULL_LEFT);
 				RainDetectFlag=1;
 			}
 			else if(RainDetectFlag==1)
 			{
-				//__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_1, 2000);
 				SERVO_MoveTo(SERVO_MOTOR2,SERVO_ANGLE_FULL_RIGHT);
 				RainDetectFlag=0;
 
@@ -1341,6 +1114,7 @@ void StartRearLightsTask(void *argument)
 		  osDelay(100);
 		  }
 	  }
+	  else
 	  if(Right_Light_Flag)
 	  {
 		  for(uint8_t t = 0; t < 16; t++) {
@@ -1360,63 +1134,6 @@ void StartRearLightsTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-void SelfDrivingCheck_side(void)
-{
 
-	DCMotor_stop();
-	osDelay(1000); /* 500 */
-	DCMotor_moveBackward(Car_Current_Speed);
-	osDelay(500); /* 500 */
-	DCMotor_stop();
-	osDelay(1000); /* 15 */
-	/* Servo turn to Right (120) then read distance*/
-	SERVO_MoveTo(SERVO_MOTOR1,15);
-	osDelay(15);
-	HCSR04_Trigger(HCSR04_SENSOR1);
-	osDelay(500);
-	Distance_Right = HCSR04_Read(HCSR04_SENSOR1);
-
-	SERVO_MoveTo(SERVO_MOTOR1,55);
-	osDelay(300);
-
-	/* Servo turn to Left (60) then read distance*/
-	SERVO_MoveTo(SERVO_MOTOR1,95);
-	osDelay(15);
-	HCSR04_Trigger(HCSR04_SENSOR1);
-	osDelay(500);
-	Distance_Left = HCSR04_Read(HCSR04_SENSOR1);
-	/* Servo turn to origin (115) then read distance*/
-	SERVO_MoveTo(SERVO_MOTOR1,55);
-
-
-//	DCMotor_stop();
-//	DCMotor_moveBackward(Car_Current_Speed);
-//	while(1)
-//	{
-//		HCSR04_Trigger(HCSR04_SENSOR1);
-//		osDelay(50);
-//		double d = HCSR04_Read(HCSR04_SENSOR1);
-//		if(d > (SELF_DRIVING_CRITICAL_RANGE+10))
-//			break;
-//		osDelay(10);
-//	}
-//	DCMotor_stop();
-//	osDelay(10);
-//	 // Servo turn to Left (150) then read distance
-//	SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_LEFT);
-//	HCSR04_Trigger(HCSR04_SENSOR1);
-//	osDelay(800);
-//	Distance_Left = HCSR04_Read(HCSR04_SENSOR1);
-//
-//	 // Servo turn to Right (50) then read distance
-//	SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_RIGHT);
-//	HCSR04_Trigger(HCSR04_SENSOR1);
-//	osDelay(800);
-//	Distance_Right = HCSR04_Read(HCSR04_SENSOR1);
-//	 // Servo turn to origin (100) then read distance
-//	SERVO_MoveTo(SERVO_MOTOR1,SERVO_ANGLE_CENTER);
-//	osDelay(200);
-
-}
 /* USER CODE END Application */
 

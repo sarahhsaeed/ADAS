@@ -1,15 +1,3 @@
-/*
- * File: HCSR04.h
- * Driver Name: [[ HC-SR04 Ultrasonic Sensor ]]
- * SW Layer:   ECUAL
- * Created on: Jun 28, 2020
- * Author:     Khaled Magdy
- * -------------------------------------------
- * For More Information, Tutorials, etc.
- * Visit Website: www.DeepBlueMbedded.com
- *
- */
-
 #ifndef HCSR04_H_
 #define HCSR04_H_
 

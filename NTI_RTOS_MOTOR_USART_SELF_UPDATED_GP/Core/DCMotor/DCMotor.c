@@ -31,6 +31,7 @@ void DCMotor_moveForward(uint8_t speed)
 	motorControl_t payload = {0};
 	for(uint8_t i = 0; i < 2; i++)
 	{
+	  /* If invalid speed parameter is passed, ignore speed assignment */
 	  payload.motors[i].modify = speed > 100 ? MOTOR_MODIFY_DIR : MOTOR_MODIFY_ALL;
 	  payload.motors[i].speed = speed;
 	  payload.motors[i].control = MOTOR_FWD;
@@ -43,6 +44,7 @@ void DCMotor_moveBackward(uint8_t speed)
 	motorControl_t payload = {0};
 	for(uint8_t i = 0; i < 2; i++)
 	{
+	  /* If invalid speed parameter is passed, ignore speed assignment */
 	  payload.motors[i].modify = speed > 100 ? MOTOR_MODIFY_DIR : MOTOR_MODIFY_ALL;
 	  payload.motors[i].speed = speed;
 	  payload.motors[i].control = MOTOR_REV;
@@ -53,11 +55,11 @@ void DCMotor_moveBackward(uint8_t speed)
 void DCMotor_moveLeft(uint8_t speed)
 {
 	motorControl_t payload = {0};
-
+	/* If invalid speed parameter is passed, ignore speed assignment */
 	payload.motors[0].modify = speed > 100 ? MOTOR_MODIFY_DIR : MOTOR_MODIFY_ALL;
 	payload.motors[0].speed = speed;
 	payload.motors[0].control = MOTOR_FWD;
-
+	/* If invalid speed parameter is passed, ignore speed assignment */
 	payload.motors[1].modify = speed > 100 ? MOTOR_MODIFY_DIR : MOTOR_MODIFY_ALL;
 	payload.motors[1].speed = speed;
 	payload.motors[1].control = MOTOR_REV;
@@ -67,17 +69,13 @@ void DCMotor_moveLeft(uint8_t speed)
 void DCMotor_moveRight(uint8_t speed)
 {
 	motorControl_t payload = {0};
-
+	/* If invalid speed parameter is passed, ignore speed assignment */
 	payload.motors[0].modify = speed > 100 ? MOTOR_MODIFY_DIR : MOTOR_MODIFY_ALL;
 	payload.motors[0].speed = speed;
-	//payload.motors[0].modify = MOTOR_MODIFY_ALL;
-	//payload.motors[0].speed = MOTOR_TURN_SPEED;
 	payload.motors[0].control = MOTOR_REV;
-
+	/* If invalid speed parameter is passed, ignore speed assignment */
 	payload.motors[1].modify = speed > 100 ? MOTOR_MODIFY_DIR : MOTOR_MODIFY_ALL;
 	payload.motors[1].speed = speed;
-	//payload.motors[1].modify = MOTOR_MODIFY_ALL;
-	//payload.motors[1].speed = MOTOR_TURN_SPEED;
 	payload.motors[1].control = MOTOR_FWD;
 	osMessageQueuePut(motorQueueHandle, &payload, 0, 0);
 }
@@ -95,13 +93,14 @@ void DCMotor_changeSpeed(uint8_t speed)
 
 void DCMotor_handleRequest(motorControl_t* motorRequest)
 {
+	/* Loop through the motors */
 	for(uint8_t i = 0; i < 2; i++)
 	{
 	  uint16_t INx1_pin, INx2_pin;
 	  GPIO_TypeDef *INx1_port, *INx2_port;
-	  if(motorRequest->motors[i].modify == 0) continue;
-	  if(i == 0){
-		  if(motorRequest->motors[i].modify & MOTOR_MODIFY_SPEED)
+	  if(motorRequest->motors[i].modify == MOTOR_MODIFY_NONE) continue; // if no modification is needed, skip.
+	  if(i == 0){ /* First motors */
+		  if(motorRequest->motors[i].modify & MOTOR_MODIFY_SPEED) /* If speed mod. component is present, reset speed */
 			  Motor1_SetSpeed(motorRequest->motors[i].speed);
 		  INx1_port = MOTOR_IN1_GPIO_Port;
 		  INx2_port = MOTOR_IN2_GPIO_Port;
@@ -109,14 +108,14 @@ void DCMotor_handleRequest(motorControl_t* motorRequest)
 		  INx2_pin = MOTOR_IN2_Pin;
 	  }
 	  else if(i == 1){
-		  if(motorRequest->motors[i].modify & MOTOR_MODIFY_SPEED)
+		  if(motorRequest->motors[i].modify & MOTOR_MODIFY_SPEED) /* If speed mod. component is present, reset speed */
 			  Motor2_SetSpeed(motorRequest->motors[i].speed);
 		  INx1_port = MOTOR_IN3_GPIO_Port;
 		  INx2_port = MOTOR_IN4_GPIO_Port;
 		  INx1_pin = MOTOR_IN3_Pin;
 		  INx2_pin = MOTOR_IN4_Pin;
 	  }
-	if((motorRequest->motors[i].modify & MOTOR_MODIFY_DIR) == 0) continue;
+	if((motorRequest->motors[i].modify & MOTOR_MODIFY_DIR) == 0) continue; /* If direction mod. component is absent, skip */
 	switch(motorRequest->motors[i].control)
 	{
 	case MOTOR_OFF:
