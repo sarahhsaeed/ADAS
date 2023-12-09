@@ -85,7 +85,11 @@ typedef enum
 	MOVE_FORWARD   		= 2 ,
 	MOVE_BACKWORD  		= 4 ,
 	STOP_MOTOR     		= 5 ,
-	STOP_MODE     		= 8 ,    // TODO:: In Mobile APP
+	STOP_MODE     		= 8 ,    // TODO:: In Mobile APP,
+	LANEASSIST_ON		= 10,
+	LANEASSIST_OFF		= 11,
+	BLINDSPOT_ON		= 12,
+	BLINDSPOT_OFF		= 13,
 
 }MOBILE_BYTES_t;
 
@@ -106,10 +110,12 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define RED_LIGHT_2_Pin GPIO_PIN_14
-#define RED_LIGHT_2_GPIO_Port GPIOC
-#define RED_LIGHT_1_Pin GPIO_PIN_15
-#define RED_LIGHT_1_GPIO_Port GPIOC
+#define TURN_LEFT_LIGHT_Pin GPIO_PIN_13
+#define TURN_LEFT_LIGHT_GPIO_Port GPIOC
+#define TURN_RIGHT_LIGHT_Pin GPIO_PIN_14
+#define TURN_RIGHT_LIGHT_GPIO_Port GPIOC
+#define RED_LIGHT_Pin GPIO_PIN_15
+#define RED_LIGHT_GPIO_Port GPIOC
 #define MOTOR_EN1_Pin GPIO_PIN_0
 #define MOTOR_EN1_GPIO_Port GPIOA
 #define MOTOR_EN2_Pin GPIO_PIN_1

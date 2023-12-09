@@ -59,6 +59,8 @@ uint8_t Car_Current_Direction = CAR_STOP          ;
 uint8_t Car_Current_Status    = CAR_RUNNING       ;
 uint8_t Car_Current_Speed     = CAR_DEFAULT_SPEED ;
 uint8_t GUI_TRANSMIT_INSTANT  = 0                 ;
+uint8_t Car_LaneAssist_Enable = 0				  ;
+uint8_t Car_BlindSpot_Enable  = 0				  ;
 
 uint8_t Buffer_GUI[GUI_ARRAY_SIZE] = {"1123014010101"};
 //uint8_t Buffer_GUI[GUI_ARRAY_SIZE]   = {"1112000010101"};
@@ -146,15 +148,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	/*Distance = HCSR04_Read(HCSR04_SENSOR1);
-	HAL_Delay(10);
 
-	TRIG_Ticks++;
-	if(TRIG_Ticks >= 15) // Each 15msec
-	{
-		HCSR04_Trigger(HCSR04_SENSOR1);
-		TRIG_Ticks = 0;
-	}*/
   }
   /* USER CODE END 3 */
 }
@@ -225,6 +219,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	{
 		Car_Current_Speed  = CAR_STOP ;
 		Car_Current_Status = CAR_STOP ;
+	}
+	else if (Buffer_ASCII_TO_INT == LANEASSIST_ON || Buffer_ASCII_TO_INT == LANEASSIST_OFF)
+	{
+		Car_LaneAssist_Enable = Buffer_ASCII_TO_INT == LANEASSIST_ON;
+	}
+	else if (Buffer_ASCII_TO_INT == BLINDSPOT_ON || Buffer_ASCII_TO_INT == BLINDSPOT_OFF)
+	{
+		Car_LaneAssist_Enable = Buffer_ASCII_TO_INT == BLINDSPOT_ON;
 	}
 	else
 	{
