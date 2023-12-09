@@ -54,12 +54,16 @@ extern uint8_t Car_Current_Mode;
 extern uint8_t Car_Current_Direction;
 extern uint8_t Car_Current_Status;
 extern uint8_t Car_Current_Speed;
+extern uint8_t GUI_Send_Speed;
+
 extern uint8_t Buffer_GUI[GUI_ARRAY_SIZE];
 extern uint8_t GUI_TRANSMIT_INSTANT;
 extern volatile uint8_t LeftIrCounter;
 extern volatile uint8_t RightIrCounter;
 extern uint8_t Car_LaneAssist_Enable;
 extern uint8_t Car_BlindSpot_Enable;
+extern volatile uint8_t LeftIrWarnCoutner;
+extern volatile uint8_t RightIrWarnCoutner;
 
 float Distance = 0.0;
 float Distance_Right = 0.0;
@@ -618,7 +622,7 @@ void StartNormalMode(void *argument)
 	/* Infinite loop */
 	for(;;)
 	{
-		if(Car_Current_Mode == NORMAL_MODE)
+		if((Car_Current_Mode == NORMAL_MODE) && (LeftIrCounter == 0) && (RightIrCounter == 0))
 		{
 			if(Car_Current_Status == CAR_RUNNING)
 			{
@@ -690,10 +694,15 @@ void StartGUI_UpdateTask(void *argument)
 			break;
 		}
 
-		Buffer_GUI[SPEED_DIG_1_IDx] = ((Car_Current_Speed  * 2) / 100) + CHARACTER_ZERO;
-		Buffer_GUI[SPEED_DIG_2_IDx] = (((Car_Current_Speed * 2) / 10) % 10) + CHARACTER_ZERO;
-		Buffer_GUI[SPEED_DIG_3_IDx] = ((Car_Current_Speed  * 2) % 10) + CHARACTER_ZERO;
-		//if(GUI_TRANSMIT_INSTANT == 1 )
+//		Buffer_GUI[SPEED_DIG_1_IDx] = ((Car_Current_Speed  * 2) / 100) + CHARACTER_ZERO;
+//		Buffer_GUI[SPEED_DIG_2_IDx] = (((Car_Current_Speed * 2) / 10) % 10) + CHARACTER_ZERO;
+//		Buffer_GUI[SPEED_DIG_3_IDx] = ((Car_Current_Speed  * 2) % 10) + CHARACTER_ZERO;
+
+		Buffer_GUI[SPEED_DIG_1_IDx] = ((GUI_Send_Speed  * 2) / 100) + CHARACTER_ZERO;
+		Buffer_GUI[SPEED_DIG_2_IDx] = (((GUI_Send_Speed * 2) / 10) % 10) + CHARACTER_ZERO;
+		Buffer_GUI[SPEED_DIG_3_IDx] = ((GUI_Send_Speed  * 2) % 10) + CHARACTER_ZERO;
+
+		if(GUI_TRANSMIT_INSTANT == 1 )
 		{
 			HAL_UART_Transmit(&huart2, Buffer_GUI, 14, 20);
 			/********* To Protect Global Variable "GUI_TRANSMIT_INSTANT" *********/
@@ -735,10 +744,17 @@ void StartSelfDrivingTask(void *argument)
 			{
 
 				DCMotor_stop();
+
+				GUI_Send_Speed = CAR_STOP ;
+				GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 				osDelay(500);
 				DCMotor_moveBackward(Car_self_Speed);
+				GUI_Send_Speed = Car_self_Speed ;
+				GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
 				osDelay(500); /* 500 */
 				DCMotor_stop();
+				GUI_Send_Speed = CAR_STOP ;
+				GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
 				osDelay(500); /* 15 */
 				/* Servo turn to Right (120) then read distance*/
 				SERVO_MoveTo(SERVO_MOTOR1,45);
@@ -756,10 +772,52 @@ void StartSelfDrivingTask(void *argument)
 				Distance_Left = HCSR04_Read(HCSR04_SENSOR1);
 				/* Servo turn to origin (115) then read distance*/
 				SERVO_MoveTo(SERVO_MOTOR1,100);
-				if(1==0)
+
+
+				if(Distance_Left >= Distance_Right)
+
 				{
+
+
 					DCMotor_moveLeft(Car_self_Speed);
+					GUI_Send_Speed = Car_self_Speed;
+					GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
+
+					osDelay(600);
+
+
+					DCMotor_stop();
+					GUI_Send_Speed = CAR_STOP;
+					GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
+
+					osDelay(1400);
+
+
+					DCMotor_moveForward(Car_self_Speed);
+					GUI_Send_Speed = Car_self_Speed;
+					GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
+
+					osDelay(700);
+					DCMotor_stop();
+					GUI_Send_Speed = CAR_STOP;
+					GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
+
 					osDelay(1200);
+					DCMotor_moveRight(Car_self_Speed);
+					GUI_Send_Speed = Car_self_Speed;
+					GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
+
+					osDelay(600);
+					DCMotor_stop();
+					GUI_Send_Speed = CAR_STOP;
+					GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
+					osDelay(1200);
+
+					GUI_Send_Speed = Car_Current_Speed;
+
+
+					/* DCMotor_moveLeft(Car_self_Speed);
+					osDelay(600);
 					DCMotor_stop();
 					osDelay(1200);
 					DCMotor_moveForward(Car_self_Speed);
@@ -788,23 +846,41 @@ void StartSelfDrivingTask(void *argument)
 						osDelay(50);
 						DCMotor_moveForward(Car_self_Speed);
 						osDelay(5);
-					}
+					} */
 				}
-				else
+				else if (Distance_Right >= Distance_Left)
 				{
 					DCMotor_moveRight(Car_self_Speed);
+					GUI_Send_Speed = Car_self_Speed;
+					GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
+
 					osDelay(600);
 					DCMotor_stop();
+					GUI_Send_Speed = CAR_STOP;
+					GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
+
 					osDelay(1400);
 					DCMotor_moveForward(Car_self_Speed);
+					GUI_Send_Speed = Car_self_Speed;
+					GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
+
 					osDelay(700);
 					DCMotor_stop();
+					GUI_Send_Speed = CAR_STOP;
+					GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
 					osDelay(1200);
 					DCMotor_moveLeft(Car_self_Speed);
+					GUI_Send_Speed = Car_self_Speed;
+					GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
 					osDelay(600);
 					DCMotor_stop();
+					GUI_Send_Speed = CAR_STOP;
+					GUI_TRANSMIT_INSTANT =  GUI_TRANSMIT ;
 					osDelay(1200);
-					DCMotor_moveForward(Car_self_Speed); // parralle  to origin
+
+					GUI_Send_Speed = Car_Current_Speed;
+
+				/*	DCMotor_moveForward(Car_self_Speed); // Moving Parrallel to origin
 
 					osDelay(1000);
 					DCMotor_moveLeft(Car_self_Speed);
@@ -817,6 +893,8 @@ void StartSelfDrivingTask(void *argument)
 					osDelay(600);
 					DCMotor_stop();
 					osDelay(2000);
+
+					*/
 
 				}
 
@@ -1001,55 +1079,66 @@ void LaneDepartureWarning(void *argument)
 	for(;;)
 	{
 		osDelay(1000);continue; // temp disable
-		if(LeftIrCounter>2)
+		if(LeftIrWarnCoutner>2)
 		{
-			LeftIrCounter=0;
+			LeftIrWarnCoutner=0;
 		}
-		if(RightIrCounter>2)
+		if(RightIrWarnCoutner>2)
 		{
-			RightIrCounter=0;
+			RightIrWarnCoutner=0;
 		}
-		if(LeftIrCounter == 1 && RightIrCounter == 0)
+		if(LeftIrWarnCoutner == 1 && RightIrCounter == 0)
 		{
 			// Activate left lane warning
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,1);
 			Buffer_GUI[LANE_DIG_1_IDx] = 1;
+			Buffer_GUI[LANE_DIG_2_IDx] = 0;
+			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
 			osDelay(150);
 		}
-		else if(LeftIrCounter == 2 )
+		else if(LeftIrWarnCoutner == 2 )
 		{
 			// Deactivate left lane warning
-			LeftIrCounter = 0;
-			RightIrCounter = 0;
+			LeftIrWarnCoutner = 0;
+			RightIrWarnCoutner = 0;
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,0);
 			Buffer_GUI[LANE_DIG_1_IDx] = 0;
+			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
+
 			osDelay(150);
 		}
-		else if(RightIrCounter == 1 && LeftIrCounter == 0)
+		else if(RightIrWarnCoutner == 1 && LeftIrWarnCoutner == 0)
 		{
 			// Activate right lane warning
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,1);
+			Buffer_GUI[LANE_DIG_1_IDx] = 0;
 			Buffer_GUI[LANE_DIG_2_IDx] = 1;
+			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
+
 			osDelay(150);
 		}
 		else if(RightIrCounter == 2)
 		{
 			// Deactivate right lane warning
-			LeftIrCounter = 0;
-			RightIrCounter = 0;
+			LeftIrWarnCoutner = 0;
+			RightIrWarnCoutner = 0;
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,0);
 			Buffer_GUI[LANE_DIG_2_IDx] = 0;
+			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
+
 			osDelay(150);
 		}
 
-		else if((RightIrCounter == 1 && LeftIrCounter == 1))
+		else if((RightIrWarnCoutner == 1 && LeftIrWarnCoutner == 1))
 		{
-			LeftIrCounter = 0;
-			RightIrCounter = 0;
+			LeftIrWarnCoutner = 0;
+			RightIrWarnCoutner = 0;
 			HAL_GPIO_WritePin(LEFT_IR_LED_GPIO_Port,LEFT_IR_LED_Pin,0);
 			HAL_GPIO_WritePin(RIGHT_IR_LED_GPIO_Port,RIGHT_IR_LED_Pin,0);
 			Buffer_GUI[LANE_DIG_1_IDx] = 0;
 			Buffer_GUI[LANE_DIG_2_IDx] = 0;
+			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
+
 			osDelay(150);
 		}
 		else
@@ -1081,6 +1170,8 @@ void RainDetection(void *argument)
 		{
 			//HAL_GPIO_WritePin(RAIN_LED_GPIO_Port, RAIN_LED_Pin, 1);
 			Buffer_GUI[RAIN_DIG_1_IDx] = 1;
+			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
+
 			if(RainDetectFlag==0)
 			{
 				//__HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_1, 100);
@@ -1099,6 +1190,8 @@ void RainDetection(void *argument)
 		{
 			//HAL_GPIO_WritePin(RAIN_LED_GPIO_Port, RAIN_LED_Pin, 0);
 			Buffer_GUI[RAIN_DIG_1_IDx] = 0;
+			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
+
 		}
 		osDelay(500);
 	}
@@ -1115,61 +1208,60 @@ void RainDetection(void *argument)
 void LaneKeepAssist(void *argument)
 {
   /* USER CODE BEGIN LaneKeepAssist */
-	static uint8_t laneKeepFlag=0;
-
-	/* Infinite loop */
-	for(;;)
-	{
-		//		osDelay(1000);continue; // temp disable
-		if(!Car_LaneAssist_Enable) {
-			//osDelay(1000);
-			osThreadYield();
-			continue;
-		}
-		if(LeftIrCounter>0)
+	//	static uint8_t laneKeepFlag = 0;
+	//	uint8_t i = 0;
+		/* Infinite loop */
+		for(;;)
 		{
-			for(uint8_t i=0;i<5;i++)
+			//		osDelay(1000); continue; // Temp disable
+			if(!Car_LaneAssist_Enable)
 			{
-				DCMotor_moveRight(70);
-				osDelay(100);
-				DCMotor_moveForward(Car_Current_Speed);
-				osDelay(100);
-				DCMotor_stop();
 				osDelay(1000);
+				continue;
+			}
+			if(LeftIrCounter > 0)
+			{
+				while(LeftIrCounter != 2)
+				{
+					DCMotor_moveRight(70);
+					osDelay(300); /* Check */
+					//DCMotor_moveForward(Car_Current_Speed); /* Check */
+					//osDelay(100);
+//					DCMotor_stop();
+//					osDelay(1000); /* To be modified */
+
+				}
+
+				LeftIrCounter = 0;
 
 			}
-			laneKeepFlag=1;
-			LeftIrCounter=0;
 
-		}
+			else if(RightIrCounter > 0)
+			{
+				while(RightIrCounter != 2)
+				{
+					DCMotor_moveLeft(70);
+					osDelay(300);
+					//DCMotor_moveForward(Car_Current_Speed);
+					//osDelay(100);
+//					DCMotor_stop();
+//					osDelay(1000); /* To be modified */
 
-		if(laneKeepFlag==1 && LeftIrCounter==0 && RightIrCounter==0 )
-		{
-			laneKeepFlag=0;
-			DCMotor_moveLeft(70);
-			osDelay(100);
-			DCMotor_moveForward(Car_Current_Speed);
+				}
+
+				RightIrCounter = 0;
+			}
+
+	//		if(laneKeepFlag == 1 && RightIrCounter == 0 && LeftIrCounter == 0)
+	//		{
+	//			laneKeepFlag = 0;
+	//			DCMotor_moveLeft(70);
+	//			osDelay(100);
+	//			DCMotor_moveForward(70);
+	//			osDelay(100);
+	//		}
 			osDelay(100);
 		}
-//		if(RightIrCounter==1)
-//		{
-//			laneKeepFlag=1;
-//			DCMotor_moveRight(70);
-//			osDelay(100);
-//			DCMotor_moveForward(Car_Current_Speed);
-//			osDelay(100);
-//
-//		}
-		//		if(laneKeepFlag==1 && RightIrCounter==0 && LeftIrCounter==0)
-		//		{
-		//			laneKeepFlag=0;
-		//			DCMotor_moveLeft(70);
-		//			osDelay(100);
-		//			DCMotor_moveForward(70);
-		//			osDelay(100);
-		//		}
-		osDelay(100);
-	}
   /* USER CODE END LaneKeepAssist */
 }
 
@@ -1186,12 +1278,19 @@ void StartBlindspot(void *argument)
 	/* Infinite loop */
 	for(;;)
 	{
-		static uint8_t TRIG_Ticks = 0;
-		if(!Car_BlindSpot_Enable) {
-					//osDelay(1000);
-					osThreadYield();
-					continue;
+		if(!Car_BlindSpot_Enable)
+		{
+			osDelay(1000);
+			continue;
 		}
+//		osDelay(1000); continue;
+		static uint8_t TRIG_Ticks = 0;
+//		if(!Car_BlindSpot_Enable)
+//		{
+//					osDelay(1000);
+//					osThreadYield();
+//					continue;
+//		}
 		TRIG_Ticks++;
 		if(TRIG_Ticks >= 1)
 		{
@@ -1204,7 +1303,11 @@ void StartBlindspot(void *argument)
 		{
 			// Toggle warning LED
 			HAL_GPIO_WritePin(BLIND_LED_GPIO_Port, BLIND_LED_Pin, 1);
-			Buffer_GUI[B_SPOT_DIG1_IDx] = Buffer_GUI[B_SPOT_DIG2_IDx] = 1;
+
+			Buffer_GUI[B_SPOT_DIG1_IDx] = 0;
+			Buffer_GUI[B_SPOT_DIG2_IDx] = 1;
+			GUI_TRANSMIT_INSTANT = GUI_TRANSMIT ;
+
 			osDelay(1000);
 		}
 		else

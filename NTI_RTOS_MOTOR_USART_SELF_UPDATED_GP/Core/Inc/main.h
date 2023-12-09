@@ -99,7 +99,19 @@ typedef enum
 	CAR_RUNNING
 }CAR_STATUS_t;
 
+typedef enum
+{
+	GUI_NO_TRANSMIT = 0 ,
+	GUI_TRANSMIT
+}GUI_TX_t;
 
+
+
+typedef enum
+{
+	FALLING = 0 ,
+	RISING
+}Trigger;
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
