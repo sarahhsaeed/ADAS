@@ -4,7 +4,7 @@ Welcome to our NTI Graduation Project repository 🖐🏻! We are thrilled and p
 
 ## ⭐Introduction
 
-Our ADAS project aims to revolutionize the way we interact with vehicles, bringing advanced technologies and intelligent features to the forefront of modern driving. With a focus on user-friendly controls, real-time monitoring, and proactive safety measures, our system provides an unprecedented level of convenience and protection.
+Our ADAS project aims to revolutionize the way we interact with vehicles, bringing advanced technologies and intelligent features to the forefront of modern driving. With a focus on user-friendly controls, and real-time monitoring.
 
 ## ⭐Features and Functionalities
 
