@@ -1,0 +1,7 @@
+../Core/DCMotor/DCMotor.c:17:6:DCMotor_stop	16	static
+../Core/DCMotor/DCMotor.c:29:6:DCMotor_moveForward	24	static
+../Core/DCMotor/DCMotor.c:42:6:DCMotor_moveBackward	24	static
+../Core/DCMotor/DCMotor.c:55:6:DCMotor_moveLeft	24	static
+../Core/DCMotor/DCMotor.c:69:6:DCMotor_moveRight	24	static
+../Core/DCMotor/DCMotor.c:83:6:DCMotor_changeSpeed	24	static
+../Core/DCMotor/DCMotor.c:94:6:DCMotor_handleRequest	32	static
