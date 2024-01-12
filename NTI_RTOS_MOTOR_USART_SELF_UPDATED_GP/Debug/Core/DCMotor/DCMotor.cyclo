@@ -1,7 +1,0 @@
-DCMotor.c:17:6:DCMotor_stop	2
-DCMotor.c:29:6:DCMotor_moveForward	3
-DCMotor.c:42:6:DCMotor_moveBackward	3
-DCMotor.c:55:6:DCMotor_moveLeft	3
-DCMotor.c:69:6:DCMotor_moveRight	3
-DCMotor.c:83:6:DCMotor_changeSpeed	3
-DCMotor.c:94:6:DCMotor_handleRequest	12

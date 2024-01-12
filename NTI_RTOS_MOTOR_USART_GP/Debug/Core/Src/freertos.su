@@ -1,4 +1,0 @@
-../Core/Src/freertos.c:105:6:MX_FREERTOS_Init	8	static
-../Core/Src/freertos.c:157:6:StartmotorTask	32	static
-../Core/Src/freertos.c:187:6:StartACCTask	16	static
-../Core/Src/freertos.c:477:6:StartNormalMode	16	static

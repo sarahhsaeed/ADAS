@@ -1,8 +1,0 @@
-../Core/SERVO/../../util/DWT.h:18:26:DWT_Delay_Init	4	static,ignoring_inline_asm
-../Core/SERVO/../../util/DWT.h:55:22:DWT_Delay_us	24	static
-../Core/SERVO/SERVO.c:14:6:SERVO_Init	216	static
-../Core/SERVO/SERVO.c:114:6:SERVO_MoveTo	32	static
-../Core/SERVO/SERVO.c:125:6:SERVO_RawMove	16	static
-../Core/SERVO/SERVO.c:134:10:SERVO_Get_MaxPulse	16	static
-../Core/SERVO/SERVO.c:141:10:SERVO_Get_MinPulse	16	static
-../Core/SERVO/SERVO.c:148:6:SERVO_Sweep	24	static
